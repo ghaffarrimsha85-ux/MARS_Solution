@@ -1,0 +1,218 @@
+﻿@model MARS_Project.Models.User
+@{
+    ViewBag.Title = "My Profile";
+    ViewBag.Active = "profile";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title { font-size:1.15rem; font-weight:700; color:#1a1a2e; margin-bottom:2px; }
+    .pg-sub   { font-size:12.5px; color:#aaa; margin-bottom:22px; }
+
+    .profile-wrapper { max-width:680px; }
+
+    /* Avatar card */
+    .avatar-card {
+        background:#fff; border-radius:16px;
+        border:1px solid #eee;
+        box-shadow:0 4px 20px rgba(0,0,0,0.06);
+        padding:28px 24px; text-align:center;
+        margin-bottom:16px; position:relative; overflow:hidden;
+    }
+    .avatar-card::before {
+        content:''; position:absolute; top:0; left:0; right:0;
+        height:5px;
+        background:linear-gradient(90deg,#C0392B,#E8C97A);
+    }
+
+    .avatar-ring {
+        width:100px; height:100px; border-radius:50%;
+        padding:3px;
+        background:linear-gradient(135deg,#C0392B,#E8C97A);
+        display:inline-block; margin-bottom:14px;
+    }
+    .avatar-ring img {
+        width:100%; height:100%; border-radius:50%;
+        object-fit:cover; border:3px solid #fff; display:block;
+    }
+
+    .profile-name  { font-size:1.2rem; font-weight:700; color:#1a1a2e; margin-bottom:4px; }
+    .profile-role  { font-size:12px; color:#aaa; font-weight:500; margin-bottom:12px; }
+
+    .status-badge {
+        display:inline-flex; align-items:center; gap:5px;
+        padding:4px 14px; border-radius:20px;
+        font-size:12px; font-weight:700;
+        background:#e8f8f0; color:#1a7a47;
+        border:1px solid #b7e4cc;
+    }
+    .status-dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+
+    /* Info card */
+    .info-card {
+        background:#fff; border-radius:16px;
+        border:1px solid #eee;
+        box-shadow:0 4px 20px rgba(0,0,0,0.06);
+        overflow:hidden; margin-bottom:16px;
+    }
+    .info-header {
+        padding:13px 22px; border-bottom:1px solid #f0f0f0;
+        background:#fafafa; display:flex; align-items:center; gap:10px;
+    }
+    .info-header .hicon {
+        width:30px; height:30px;
+        background:linear-gradient(135deg,#C0392B,#8B1A14);
+        border-radius:8px; display:flex; align-items:center; justify-content:center;
+        color:#fff; font-size:12px;
+    }
+    .info-header h6 { font-size:13.5px; font-weight:700; color:#1a1a2e; margin:0; }
+
+    .info-row {
+        display:flex; align-items:center; gap:14px;
+        padding:13px 22px; border-bottom:1px solid #f8f8f8;
+        transition:background 0.15s;
+    }
+    .info-row:last-child { border-bottom:none; }
+    .info-row:hover { background:#fefefe; }
+
+    .info-row-icon {
+        width:34px; height:34px; background:#fef3f2; border-radius:9px;
+        display:flex; align-items:center; justify-content:center;
+        color:#C0392B; font-size:13px; flex-shrink:0;
+    }
+
+    .info-row-label { font-size:10.5px; font-weight:600; color:#aaa; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:2px; }
+    .info-row-value { font-size:13.5px; color:#1a1a2e; font-weight:500; }
+    .info-row-value.muted { color:#bbb; font-style:italic; }
+
+    /* Action card */
+    .action-card {
+        background:#fff; border-radius:16px;
+        border:1px solid #eee;
+        box-shadow:0 4px 20px rgba(0,0,0,0.06);
+        padding:18px 22px;
+        display:flex; align-items:center; justify-content:space-between;
+        flex-wrap:wrap; gap:12px;
+    }
+
+    .btn-edit-p {
+        display:inline-flex; align-items:center; gap:7px;
+        padding:10px 22px;
+        background:linear-gradient(135deg,#C0392B,#8B1A14);
+        color:#fff; border-radius:11px;
+        font-size:13.5px; font-weight:600; text-decoration:none;
+        box-shadow:0 4px 14px rgba(192,57,43,0.28);
+        transition:opacity 0.2s,transform 0.15s;
+    }
+    .btn-edit-p:hover { opacity:0.9; color:#fff; transform:translateY(-1px); }
+
+    .btn-pwd {
+        display:inline-flex; align-items:center; gap:7px;
+        padding:10px 22px;
+        background:transparent; color:#C0392B;
+        border:2px solid #C0392B; border-radius:11px;
+        font-size:13.5px; font-weight:600; text-decoration:none;
+        transition:background 0.2s,color 0.2s;
+    }
+    .btn-pwd:hover { background:#C0392B; color:#fff; }
+
+    @@media(max-width:480px) {
+        .action-card { flex-direction:column; }
+        .btn-edit-p, .btn-pwd { width:100%; justify-content:center; }
+    }
+</style>
+
+<div class="pg-title"><i class="fa fa-user-shield me-2" style="color:#C0392B;"></i>My Profile</div>
+<div class="pg-sub">Your admin account information</div>
+
+<div class="profile-wrapper">
+
+    <!-- Avatar Card -->
+    <div class="avatar-card">
+        <div class="avatar-ring">
+            <img src="@(!string.IsNullOrEmpty(Model.ProfileImage) ? Url.Content(Model.ProfileImage) : Url.Content("~/Content/Images/avt.png"))"
+                 alt="@Model.Name" />
+        </div>
+        <div class="profile-name">@Model.Name</div>
+        <div class="profile-role">Administrator · MARS Mobile Shop</div>
+        <span class="status-badge">
+            <span class="status-dot"></span> Active
+        </span>
+    </div>
+
+    <!-- Info Card -->
+    <div class="info-card">
+        <div class="info-header">
+            <div class="hicon"><i class="fa fa-address-card"></i></div>
+            <h6>Profile Information</h6>
+        </div>
+
+        <div class="info-row">
+            <div class="info-row-icon"><i class="fa fa-envelope"></i></div>
+            <div>
+                <div class="info-row-label">Email Address</div>
+                <div class="info-row-value @(string.IsNullOrEmpty(Model.Email) ? "muted" : "")">
+                    @(string.IsNullOrEmpty(Model.Email) ? "Not provided" : Model.Email)
+                </div>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-row-icon"><i class="fa fa-phone"></i></div>
+            <div>
+                <div class="info-row-label">Contact Number</div>
+                <div class="info-row-value @(string.IsNullOrEmpty(Model.ContactNumber) ? "muted" : "")">
+                    @(string.IsNullOrEmpty(Model.ContactNumber) ? "Not provided" : Model.ContactNumber)
+                </div>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-row-icon"><i class="fa fa-map-marker-alt"></i></div>
+            <div>
+                <div class="info-row-label">Address</div>
+                <div class="info-row-value @(string.IsNullOrEmpty(Model.Address) ? "muted" : "")">
+                    @(string.IsNullOrEmpty(Model.Address) ? "Not provided" : Model.Address)
+                </div>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-row-icon"><i class="fa fa-calendar-alt"></i></div>
+            <div>
+                <div class="info-row-label">Member Since</div>
+                <div class="info-row-value">
+                    @(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("MMMM dd, yyyy") : "—")
+                </div>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-row-icon"><i class="fa fa-shield-halved"></i></div>
+            <div>
+                <div class="info-row-label">Account Type</div>
+                <div class="info-row-value">Administrator</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-card">
+        <a href="@Url.Action("EditProfile","Admin")" class="btn-edit-p">
+            <i class="fa fa-user-pen"></i> Edit Profile
+        </a>
+        <a href="@Url.Action("ChangePassword","Admin")" class="btn-pwd">
+            <i class="fa fa-key"></i> Change Password
+        </a>
+    </div>
+
+</div>
+
+@section Scripts {
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({ icon:'success', title:'Done!', text:'@TempData["Message"]', confirmButtonColor:'#C0392B', timer:2500 });
+        </script>
+    }
+}

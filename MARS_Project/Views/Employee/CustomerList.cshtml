@@ -1,0 +1,63 @@
+﻿@model IEnumerable<MARS_Project.Models.User>
+@{
+    ViewBag.Title = "Customer List";
+    Layout = "~/Views/Shared/_LayoutEmployee.cshtml";
+}
+
+<h3 class="fw-bold mb-4 text-center text-primary">
+    <i class="fa fa-users"></i> Customer List
+</h3>
+
+<table id="customerTable" class="display nowrap table table-bordered table-hover align-middle shadow-sm" style="width:100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.UserID</td>
+                <td>@c.Name</td>
+                <td>@c.Email</td>
+                <td>@c.ContactNumber</td>
+                <td>@c.Address</td>
+                <td>
+                    @if (c.Status == "Active" || c.Status == "Approved")
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactive</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#customerTable').DataTable({
+                dom: '<"d-flex justify-content-between align-items-center mb-2"Bf>rtip',
+                buttons: [
+                    { extend: 'copy', text: '<i class="fa fa-copy"></i> Copy' },
+                    { extend: 'csv', text: '<i class="fa fa-file-csv"></i> CSV' },
+                    { extend: 'excel', text: '<i class="fa fa-file-excel"></i> Excel' },
+                    { extend: 'pdf', text: '<i class="fa fa-file-pdf"></i> PDF' },
+                    { extend: 'print', text: '<i class="fa fa-print"></i> Print' }
+                ],
+                responsive: true,
+                language: { search: "_INPUT_", searchPlaceholder: "Search customers..." }
+            });
+        });
+    </script>
+}

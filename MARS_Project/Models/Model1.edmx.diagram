@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="888adbd11dc34a79a4eede104753148f" Name="Diagram1">
+        <EntityTypeShape EntityType="MARSModel.Cart" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.CartItem" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.Order" Width="1.5" PointX="3" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.OrderItem" Width="1.5" PointX="5.25" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.Product" Width="1.5" PointX="3" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.ProductCategory" Width="1.5" PointX="0.75" PointY="12.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.RepairRequest" Width="1.5" PointX="3" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.RepairResponse" Width="1.5" PointX="5.25" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="MARSModel.User" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
+        <AssociationConnector Association="MARSModel.FK_Cart_User" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_CartItem_Cart" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_CartItem_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_Order_User" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_OrderItem_Order" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_OrderItem_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_Product_ProductCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_RepairRequest_User" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_RepairResponse_RepairRequest" ManuallyRouted="false" />
+        <AssociationConnector Association="MARSModel.FK_RepairResponse_User" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="MARSModel.UserType" Width="1.5" PointX="0.75" PointY="1.375" />
+        <AssociationConnector Association="MARSModel.FK_User_UserType" />
+        <AssociationConnector Association="MARSModel.FK_RepairRequest_AssignedEmployee" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,42 @@
+﻿@model IEnumerable<MARS_Project.Models.RepairRequest>
+@{
+    Layout = "~/Views/Shared/_LayoutEmployee.cshtml";
+}
+
+<h3 class="mb-4 text-center">Repair Requests</h3>
+
+<table id="requestsTable" class="display nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Model)
+        {
+            <tr>
+                <td>@req.RequestID</td>
+                <td>@req.User.Name</td>
+                <td>@req.ProblemDescription</td>
+                <td>@req.Status</td>
+                <td>@req.RequestDate</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#requestsTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+                responsive: true
+            });
+        });
+    </script>
+}

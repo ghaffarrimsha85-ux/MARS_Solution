@@ -1,0 +1,565 @@
+﻿@model MARS_Project.Models.User
+@{
+    ViewBag.Title = "Register";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register — MARS</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --mars-red: #C0392B;
+            --mars-dark: #1a0a08;
+            --mars-card: rgba(15, 6, 4, 0.82);
+            --mars-gold: #E8C97A;
+            --mars-border: rgba(232, 201, 122, 0.25);
+            --mars-input-bg: rgba(255,255,255,0.06);
+            --mars-input-border: rgba(255,255,255,0.15);
+            --mars-text: #f5ede8;
+            --mars-muted: rgba(245, 237, 232, 0.55);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: var(--mars-dark);
+            padding: 24px 0;
+        }
+
+        .bg-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+            .bg-scene::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(ellipse 80% 60% at 30% 30%, rgba(192,57,43,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 75%, rgba(139,27,20,0.2) 0%, transparent 55%), radial-gradient(ellipse 100% 100% at 50% 50%, #1a0a08 30%, #0d0403 100%);
+                animation: pulseGlow 8s ease-in-out infinite alternate;
+            }
+
+        @@keyframes pulseGlow {
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .bg-scene::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(232,201,122,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(232,201,122,0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: drift 14s ease-in-out infinite alternate;
+        }
+
+        .orb-1 {
+            width: 380px;
+            height: 380px;
+            background: rgba(192,57,43,0.16);
+            top: -80px;
+            left: -60px;
+            animation-duration: 16s;
+        }
+
+        .orb-2 {
+            width: 280px;
+            height: 280px;
+            background: rgba(139,27,20,0.14);
+            bottom: -50px;
+            right: -50px;
+            animation-duration: 11s;
+            animation-delay: -5s;
+        }
+
+        @@keyframes drift {
+            0% {
+                transform: translate(0,0) scale(1);
+            }
+
+            100% {
+                transform: translate(25px,18px) scale(1.07);
+            }
+        }
+
+        .card-wrap {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 0 1rem;
+            animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(32px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--mars-card);
+            border: 1px solid var(--mars-border);
+            border-radius: 20px;
+            padding: 40px 40px 36px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            position: relative;
+        }
+
+        .corner-accent {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            width: 60px;
+            height: 60px;
+            border-top: 2px solid rgba(232,201,122,0.4);
+            border-right: 2px solid rgba(232,201,122,0.4);
+            border-radius: 0 20px 0 0;
+            pointer-events: none;
+        }
+
+        .corner-accent-bl {
+            position: absolute;
+            bottom: -1px;
+            left: -1px;
+            width: 60px;
+            height: 60px;
+            border-bottom: 2px solid rgba(232,201,122,0.4);
+            border-left: 2px solid rgba(232,201,122,0.4);
+            border-radius: 0 0 0 20px;
+            pointer-events: none;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--mars-red), #8B1A14);
+            border-radius: 13px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 24px rgba(192,57,43,0.4);
+        }
+
+            .brand-icon svg {
+                width: 26px;
+                height: 26px;
+                fill: white;
+            }
+
+        .brand h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--mars-text);
+            margin-bottom: 4px;
+        }
+
+        .brand p {
+            font-size: 12.5px;
+            color: var(--mars-muted);
+        }
+
+        /* Customer badge */
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(232,201,122,0.12);
+            border: 1px solid rgba(232,201,122,0.3);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 12px;
+            color: var(--mars-gold);
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+            .role-badge svg {
+                width: 13px;
+                height: 13px;
+                fill: var(--mars-gold);
+            }
+
+        .divider {
+            height: 1px;
+            background: var(--mars-border);
+            margin-bottom: 24px;
+        }
+
+        .alert-error {
+            background: rgba(192,57,43,0.18);
+            border: 1px solid rgba(192,57,43,0.35);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #f5a49a;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Two column grid for some fields */
+        .fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 16px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+            .field.full {
+                grid-column: 1 / -1;
+            }
+
+            .field label {
+                display: block;
+                font-size: 11px;
+                font-weight: 500;
+                color: var(--mars-muted);
+                letter-spacing: 0.6px;
+                text-transform: uppercase;
+                margin-bottom: 6px;
+            }
+
+        .field-wrap {
+            position: relative;
+        }
+
+            .field-wrap svg.icon {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 15px;
+                height: 15px;
+                stroke: var(--mars-muted);
+                fill: none;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                pointer-events: none;
+            }
+
+        .field input, .field textarea {
+            width: 100%;
+            background: var(--mars-input-bg);
+            border: 1px solid var(--mars-input-border);
+            border-radius: 10px;
+            padding: 11px 13px 11px 38px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            color: var(--mars-text);
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .field textarea {
+            resize: none;
+            height: 72px;
+            padding-top: 10px;
+        }
+
+            .field input::placeholder,
+            .field textarea::placeholder {
+                color: rgba(245,237,232,0.26);
+            }
+
+            .field input:focus,
+            .field textarea:focus {
+                border-color: rgba(232,201,122,0.45);
+                background: rgba(255,255,255,0.08);
+            }
+
+        .eye-toggle {
+            position: absolute;
+            right: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            display: flex;
+        }
+
+            .eye-toggle svg {
+                width: 15px;
+                height: 15px;
+                stroke: var(--mars-muted);
+                fill: none;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+            }
+
+        /* Strength bar */
+        .strength-wrap {
+            margin-top: 6px;
+        }
+
+        .strength-bar {
+            height: 3px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .strength-label {
+            font-size: 10.5px;
+            color: var(--mars-muted);
+            margin-top: 3px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--mars-red) 0%, #8B1A14 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 18px rgba(192,57,43,0.35);
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
+
+            .btn-submit:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 8px 24px rgba(192,57,43,0.45);
+            }
+
+            .btn-submit:active {
+                transform: translateY(0);
+            }
+
+        .card-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--mars-muted);
+        }
+
+            .card-footer a {
+                color: var(--mars-gold);
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .card-footer a:hover {
+                    text-decoration: underline;
+                }
+
+        @@media (max-width: 480px) {
+            .card {
+                padding: 32px 22px 28px;
+            }
+
+            .fields-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-scene"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="card-wrap">
+        <div class="card">
+            <div class="corner-accent"></div>
+            <div class="corner-accent-bl"></div>
+
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <h1>Create Account</h1>
+                <p>Join MARS System as a customer</p>
+            </div>
+
+            <!-- Auto role badge — no dropdown needed -->
+            <div style="text-align:center; margin-bottom: 22px;">
+                <span class="role-badge">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                    Customer Account
+                </span>
+            </div>
+
+            <div class="divider"></div>
+
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert-error">
+                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#f5a49a;fill:none;stroke-width:2;flex-shrink:0;">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    @ViewBag.ErrorMessage
+                </div>
+            }
+
+            @using (Html.BeginForm("Register", "Home", FormMethod.Post))
+            {
+                <div class="fields-grid">
+
+                    <!-- Full Name -->
+                    <div class="field full">
+                        <label>Full Name</label>
+                        <div class="field-wrap">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Your full name", autocomplete = "name" })
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="field full">
+                        <label>Email Address</label>
+                        <div class="field-wrap">
+                            <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "you@example.com", autocomplete = "email" })
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="field full">
+                        <label>Password</label>
+                        <div class="field-wrap">
+                            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Create a password", id = "pwdReg", autocomplete = "new-password" })
+                            <button type="button" class="eye-toggle" onclick="togglePwd('pwdReg','eyeReg')" title="Show/hide">
+                                <svg id="eyeReg" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                            </button>
+                        </div>
+                        <div class="strength-wrap">
+                            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                            <div class="strength-label" id="strengthLabel"></div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div class="field">
+                        <label>Contact No.</label>
+                        <div class="field-wrap">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.76a16 16 0 0 0 6.29 6.29l.92-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                            @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control", placeholder = "03xx-xxxxxxx", autocomplete = "tel" })
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="field">
+                        <label>Address</label>
+                        <div class="field-wrap">
+                            <svg class="icon" viewBox="0 0 24 24" style="top:14px;transform:none;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", placeholder = "Your address", autocomplete = "street-address" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-submit">Create Account</button>
+            }
+
+            <div class="card-footer">
+                Already have an account? <a href="@Url.Action("Login", "Home")">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <script>function togglePwd(id, iconId) {
+        var f = document.getElementById(id);
+        var icon = document.getElementById(iconId);
+        if (f.type === 'password') {
+            f.type = 'text';
+            icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        } else {
+            f.type = 'password';
+            icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
+    }
+
+    // Password strength indicator
+    var pwdInput = document.getElementById('pwdReg');
+    if (pwdInput) {
+        pwdInput.addEventListener('input', function() {
+            var val = this.value;
+            var fill = document.getElementById('strengthFill');
+            var label = document.getElementById('strengthLabel');
+            var score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+            var pct = ['0%','25%','45%','70%','90%','100%'][score];
+            var clr = ['#555','#e74c3c','#e67e22','#f1c40f','#2ecc71','#27ae60'][score];
+            var lbl = ['','Weak','Fair','Good','Strong','Very Strong'][score];
+            fill.style.width = val.length ? pct : '0%';
+            fill.style.background = clr;
+            label.textContent = val.length ? lbl : '';
+            label.style.color = clr;
+        });
+    }</script>
+</body>
+</html>

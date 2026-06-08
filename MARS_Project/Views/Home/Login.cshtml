@@ -1,0 +1,482 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — MARS</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --mars-red: #C0392B;
+            --mars-dark: #1a0a08;
+            --mars-card: rgba(15, 6, 4, 0.82);
+            --mars-gold: #E8C97A;
+            --mars-border: rgba(232, 201, 122, 0.25);
+            --mars-input-bg: rgba(255,255,255,0.06);
+            --mars-input-border: rgba(255,255,255,0.15);
+            --mars-text: #f5ede8;
+            --mars-muted: rgba(245, 237, 232, 0.55);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: var(--mars-dark);
+        }
+
+        /* Animated background */
+        .bg-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+            .bg-scene::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(192,57,43,0.28) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 20% 70%, rgba(139,27,20,0.22) 0%, transparent 55%), radial-gradient(ellipse 100% 100% at 50% 50%, #1a0a08 30%, #0d0403 100%);
+                animation: pulseGlow 8s ease-in-out infinite alternate;
+            }
+
+        @@keyframes pulseGlow {
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Grid texture */
+        .bg-scene::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(232,201,122,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(232,201,122,0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: drift 14s ease-in-out infinite alternate;
+        }
+
+        .orb-1 {
+            width: 420px;
+            height: 420px;
+            background: rgba(192,57,43,0.18);
+            top: -100px;
+            right: -80px;
+            animation-duration: 16s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: rgba(139,27,20,0.14);
+            bottom: -60px;
+            left: -60px;
+            animation-duration: 12s;
+            animation-delay: -4s;
+        }
+
+        @@keyframes drift {
+            0% {
+                transform: translate(0,0) scale(1);
+            }
+
+            100% {
+                transform: translate(30px, 20px) scale(1.08);
+            }
+        }
+
+        /* Card */
+        .card-wrap {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 1rem;
+            animation: slideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(32px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--mars-card);
+            border: 1px solid var(--mars-border);
+            border-radius: 20px;
+            padding: 44px 40px 40px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        /* Logo area */
+        .brand {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .brand-icon {
+            width: 54px;
+            height: 54px;
+            background: linear-gradient(135deg, var(--mars-red), #8B1A14);
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 24px rgba(192,57,43,0.4);
+        }
+
+            .brand-icon svg {
+                width: 28px;
+                height: 28px;
+                fill: white;
+            }
+
+        .brand h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--mars-text);
+            letter-spacing: 0.5px;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .brand p {
+            font-size: 13px;
+            color: var(--mars-muted);
+            letter-spacing: 0.3px;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--mars-border);
+            margin-bottom: 28px;
+        }
+
+        /* Error/Success alerts */
+        .alert-error {
+            background: rgba(192,57,43,0.18);
+            border: 1px solid rgba(192,57,43,0.35);
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 13px;
+            color: #f5a49a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-success {
+            background: rgba(39,174,96,0.15);
+            border: 1px solid rgba(39,174,96,0.3);
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 13px;
+            color: #7de8a8;
+            margin-bottom: 20px;
+        }
+
+        /* Form fields */
+        .field {
+            margin-bottom: 18px;
+        }
+
+            .field label {
+                display: block;
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--mars-muted);
+                letter-spacing: 0.6px;
+                text-transform: uppercase;
+                margin-bottom: 7px;
+            }
+
+        .field-wrap {
+            position: relative;
+        }
+
+            .field-wrap svg {
+                position: absolute;
+                left: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 16px;
+                height: 16px;
+                stroke: var(--mars-muted);
+                fill: none;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                pointer-events: none;
+            }
+
+        .field input {
+            width: 100%;
+            background: var(--mars-input-bg);
+            border: 1px solid var(--mars-input-border);
+            border-radius: 10px;
+            padding: 12px 14px 12px 42px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--mars-text);
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+            .field input::placeholder {
+                color: rgba(245,237,232,0.28);
+            }
+
+            .field input:focus {
+                border-color: rgba(232,201,122,0.5);
+                background: rgba(255,255,255,0.09);
+            }
+
+        /* Toggle password */
+        .eye-toggle {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+        }
+
+            .eye-toggle svg {
+                position: static;
+                transform: none;
+                width: 16px;
+                height: 16px;
+                stroke: var(--mars-muted);
+            }
+
+        /* Forgot link */
+        .forgot-row {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 22px;
+        }
+
+            .forgot-row a {
+                font-size: 12px;
+                color: var(--mars-gold);
+                text-decoration: none;
+                opacity: 0.8;
+                transition: opacity 0.2s;
+            }
+
+                .forgot-row a:hover {
+                    opacity: 1;
+                }
+
+        /* Submit button */
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--mars-red) 0%, #8B1A14 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 18px rgba(192,57,43,0.35);
+            letter-spacing: 0.3px;
+        }
+
+            .btn-submit:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 8px 24px rgba(192,57,43,0.45);
+            }
+
+            .btn-submit:active {
+                transform: translateY(0);
+            }
+
+        /* Footer */
+        .card-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--mars-muted);
+        }
+
+            .card-footer a {
+                color: var(--mars-gold);
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .card-footer a:hover {
+                    text-decoration: underline;
+                }
+
+        /* Decorative corner accent */
+        .corner-accent {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            width: 60px;
+            height: 60px;
+            border-top: 2px solid rgba(232,201,122,0.4);
+            border-right: 2px solid rgba(232,201,122,0.4);
+            border-radius: 0 20px 0 0;
+            pointer-events: none;
+        }
+
+        .corner-accent-bl {
+            position: absolute;
+            bottom: -1px;
+            left: -1px;
+            width: 60px;
+            height: 60px;
+            border-bottom: 2px solid rgba(232,201,122,0.4);
+            border-left: 2px solid rgba(232,201,122,0.4);
+            border-radius: 0 0 0 20px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-scene"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="card-wrap">
+        <div class="card" style="position:relative;">
+            <div class="corner-accent"></div>
+            <div class="corner-accent-bl"></div>
+
+            <!-- Brand -->
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <h1>MARS System</h1>
+                <p>Management & Repair Solutions</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Error messages -->
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert-error">
+                    <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#f5a49a;fill:none;stroke-width:2;flex-shrink:0;">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert-error">
+                    <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#f5a49a;fill:none;stroke-width:2;flex-shrink:0;">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    @ViewBag.ErrorMessage
+                </div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert-success">@TempData["SuccessMessage"]</div>
+            }
+
+            <!-- Login Form -->
+            <form method="post" action="@Url.Action("Login", "Home")">
+
+                <div class="field">
+                    <label>Email Address</label>
+                    <div class="field-wrap">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+                        <input type="email" name="useremail" placeholder="you@example.com" required autocomplete="email" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Password</label>
+                    <div class="field-wrap">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                        <input type="password" name="password" id="pwdField" placeholder="Enter your password" required autocomplete="current-password" />
+                        <button type="button" class="eye-toggle" onclick="togglePwd()" title="Show/hide password">
+                            <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="forgot-row">
+                    <a href="@Url.Action("ForgotPassword", "Home")">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Sign In</button>
+            </form>
+
+            <div class="card-footer">
+                Don't have an account? <a href="@Url.Action("Register", "Home")">Create one</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePwd() {
+            var f = document.getElementById('pwdField');
+            var icon = document.getElementById('eyeIcon');
+            if (f.type === 'password') {
+                f.type = 'text';
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            } else {
+                f.type = 'password';
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+            }
+        }
+    </script>
+</body>
+</html>

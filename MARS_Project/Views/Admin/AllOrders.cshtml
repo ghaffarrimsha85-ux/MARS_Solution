@@ -1,0 +1,439 @@
+﻿@model IEnumerable<MARS_Project.Models.Order>
+@{
+    ViewBag.Title = "All Orders";
+    ViewBag.Active = "orders";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 2px;
+    }
+
+    .pg-sub {
+        font-size: 12.5px;
+        color: #aaa;
+        margin-bottom: 18px;
+    }
+
+    .tbl-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #eee;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .tbl-head {
+        padding: 13px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .tbl-head-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .tbl-hicon {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+    }
+
+    .tbl-head h6 {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .count-badge {
+        background: #fef3f2;
+        color: #C0392B;
+        border: 1px solid rgba(192,57,43,0.2);
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .tbl-body {
+        padding: 0 20px 16px;
+        overflow-x: auto;
+    }
+
+    #tblOrders thead tr {
+        background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+        color: #fff !important;
+    }
+
+    #tblOrders thead th {
+        border: none !important;
+        padding: 11px 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: #fff !important;
+    }
+
+    table.dataTable tbody tr {
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        table.dataTable tbody tr:hover {
+            background: #fefefe !important;
+        }
+
+    table.dataTable tbody td {
+        padding: 10px 14px !important;
+        font-size: 13.5px;
+        vertical-align: middle;
+        color: #444;
+    }
+
+    /* Order ID badge */
+    .order-id {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #fef3f2;
+        color: #C0392B;
+        border-radius: 8px;
+        padding: 3px 9px;
+        font-size: 12.5px;
+        font-weight: 700;
+    }
+
+    /* Customer avatar */
+    .cust-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#C0392B,#E8C97A);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        vertical-align: middle;
+        margin-right: 7px;
+        flex-shrink: 0;
+    }
+
+    /* Amount chip */
+    .amt-chip {
+        display: inline-flex;
+        align-items: center;
+        background: #e8f8f0;
+        color: #1a7a47;
+        border-radius: 8px;
+        padding: 3px 9px;
+        font-size: 12.5px;
+        font-weight: 700;
+    }
+
+    /* Status pill */
+    .sp {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+    .sp-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .sp.pending {
+        background: #fff8e6;
+        color: #b7770d;
+        border: 1px solid #f5d87a;
+    }
+
+    .sp.completed {
+        background: #e8f8f0;
+        color: #1a7a47;
+        border: 1px solid #b7e4cc;
+    }
+
+    .sp.cancelled {
+        background: #fef3f2;
+        color: #C0392B;
+        border: 1px solid rgba(192,57,43,0.25);
+    }
+
+    .sp.other {
+        background: #f4f4f4;
+        color: #888;
+        border: 1px solid #ddd;
+    }
+
+    /* Status select */
+    .status-select {
+        border: 1.5px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 5px 8px;
+        font-size: 12.5px;
+        color: #444;
+        font-family: 'DM Sans',sans-serif;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+
+        .status-select:focus {
+            border-color: #C0392B;
+            box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+        }
+
+    /* Action buttons */
+    .act-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #eee;
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.18s;
+    }
+
+        .act-btn.save {
+            color: #1a7a47;
+            border-color: #b7e4cc;
+        }
+
+            .act-btn.save:hover {
+                background: #1a7a47;
+                border-color: #1a7a47;
+                color: #fff;
+            }
+
+        .act-btn.view {
+            color: #1a5fa8;
+            border-color: #aecbf5;
+        }
+
+            .act-btn.view:hover {
+                background: #1a5fa8;
+                border-color: #1a5fa8;
+                color: #fff;
+            }
+
+        .act-btn.del {
+            color: #C0392B;
+            border-color: rgba(192,57,43,0.25);
+        }
+
+            .act-btn.del:hover {
+                background: #C0392B;
+                border-color: #C0392B;
+                color: #fff;
+            }
+
+    /* Modal */
+    .modal-backdrop {
+        z-index: 9998 !important;
+        opacity: 0.5 !important;
+    }
+
+    .modal {
+        z-index: 9999 !important;
+    }
+
+    body.modal-open {
+        overflow: auto !important;
+        padding-right: 0 !important;
+    }
+</style>
+
+<div class="pg-title"><i class="fa fa-box me-2" style="color:#C0392B;"></i>All Orders</div>
+<div class="pg-sub">View and manage all customer orders</div>
+
+<div class="tbl-card">
+    <div class="tbl-head">
+        <div class="tbl-head-left">
+            <div class="tbl-hicon"><i class="fa fa-box"></i></div>
+            <h6>Orders</h6>
+            <span class="count-badge">@Model.Count()</span>
+        </div>
+    </div>
+
+    <div class="tbl-body">
+        <table id="tblOrders" class="table w-100" style="margin-top:14px;">
+            <thead>
+                <tr>
+
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Update Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    string sc = order.Status == "Pending" ? "pending"
+                              : order.Status == "Completed" ? "completed"
+                              : order.Status == "Cancelled" ? "cancelled" : "other";
+
+                    string initials = (order.User != null && !string.IsNullOrEmpty(order.User.Name))
+                                    ? order.User.Name[0].ToString().ToUpper() : "?";
+
+                    <tr>
+
+                        <td>
+                            <span class="cust-avatar">@initials</span>
+                            <span style="font-weight:600;color:#1a1a2e;">@(order.User != null ? order.User.Name : "Unknown")</span>
+                        </td>
+                        <td style="font-size:12px;color:#aaa;">
+                            @(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("MMM dd, yyyy") : "—")
+                        </td>
+                        <td><span class="amt-chip">Rs. @order.TotalAmount.ToString("N0")</span></td>
+                        <td>
+                            <span class="sp @sc">
+                                <span class="sp-dot"></span>@order.Status
+                            </span>
+                        </td>
+                        <td>
+                            <form action="@Url.Action("UpdateStatus","Admin")" method="post" class="d-inline-flex align-items-center gap-2">
+                                <input type="hidden" name="id" value="@order.OrderID" />
+                                <select name="status" class="status-select">
+                                    <option @(order.Status == "Pending" ? "selected" : "")>Pending</option>
+                                    <option @(order.Status == "Completed" ? "selected" : "")>Completed</option>
+                                    <option @(order.Status == "Cancelled" ? "selected" : "")>Cancelled</option>
+                                </select>
+                                <button type="submit" class="act-btn save" title="Save Status">
+                                    <i class="fa fa-save"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                <button type="button" class="act-btn view view-details"
+                                        data-id="@order.OrderID" title="View Details">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                <a href="@Url.Action("DeleteOrder","Admin", new { id = order.OrderID })"
+                                   class="act-btn del btn-delete" title="Delete Order">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" id="orderDetailsContent"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tblOrders').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    { extend:'excelHtml5', text:'<i class="fa fa-file-excel"></i> Excel', className:'dt-btn' },
+                    { extend:'print',      text:'<i class="fa fa-print"></i> Print',      className:'dt-btn' }
+                ],
+                pageLength: 10,
+                order: [[1,'desc']],
+                language: { search:'Search:', paginate:{ previous:'&lsaquo;', next:'&rsaquo;' } },
+                columnDefs: [{ orderable:false, targets:[4,5] }]
+            });
+        });
+
+        // View details
+        $(document).on("click", ".view-details", function () {
+            var orderId = $(this).data("id");
+            $.ajax({
+                url: '@Url.Action("GetOrderDetails","Admin")' + '/' + orderId,
+                type: "GET",
+                success: function (data) {
+                    $("#orderDetailsContent").html(data);
+                    $("#orderDetailsModal").modal("show");
+                },
+                error: function () {
+                    Swal.fire({ icon:'error', title:'Error', text:'Could not load order details.', confirmButtonColor:'#C0392B' });
+                }
+            });
+        });
+
+        // Delete confirm
+        $(document).on("click", ".btn-delete", function (e) {
+            e.preventDefault();
+            var url = $(this).attr("href");
+            Swal.fire({
+                title: 'Delete this order?',
+                text: 'This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#C0392B',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                reverseButtons: true
+            }).then(function(r) { if (r.isConfirmed) window.location.href = url; });
+        });
+
+        // Modal cleanup
+        $(document).on("hidden.bs.modal", "#orderDetailsModal", function () {
+            $("body").removeClass("modal-open");
+            $(".modal-backdrop").remove();
+        });
+
+        @if (TempData["Message"] != null) {
+            <text>
+            Swal.fire({ icon:'success', title:'Done!', text:'@TempData["Message"]', confirmButtonColor:'#C0392B', timer:2500, timerProgressBar:true });
+            </text>
+        }
+    </script>
+    <style>
+        .dt-btn {
+            background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 7px !important;
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            margin-right: 4px !important;
+        }
+
+            .dt-btn:hover {
+                opacity: 0.85 !important;
+            }
+    </style>
+}

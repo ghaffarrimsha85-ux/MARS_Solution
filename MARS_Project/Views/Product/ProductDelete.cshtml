@@ -1,0 +1,48 @@
+﻿@model MARS_Project.Models.Product
+
+@{
+    ViewBag.Title = "Delete Product";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Delete Product</h2>
+<h4>Are you sure you want to delete this product?</h4>
+<hr />
+
+<dl class="dl-horizontal">
+    <dt>@Html.DisplayNameFor(model => model.Name)</dt>
+    <dd>@Html.DisplayFor(model => model.Name)</dd>
+
+    <dt>@Html.DisplayNameFor(model => model.Description)</dt>
+    <dd>@Html.DisplayFor(model => model.Description)</dd>
+
+    <dt>@Html.DisplayNameFor(model => model.Price)</dt>
+    <dd>@Html.DisplayFor(model => model.Price)</dd>
+
+    <dt>@Html.DisplayNameFor(model => model.Stock)</dt>
+    <dd>@Html.DisplayFor(model => model.Stock)</dd>
+
+    <dt>Product Image</dt>
+    <dd>
+        <img src="@Url.Content(string.IsNullOrEmpty(Model.ImageURL)
+                           ? "~/Content/Images/andoridePhon.jpg"
+                           : Model.ImageURL)"
+             alt="Product Image" height="100" width="100" />
+    </dd>
+
+    <dt>@Html.DisplayNameFor(model => model.ProductCategory.ProductCategoryName)</dt>
+    <dd>
+        @(Model.ProductCategory != null ? Model.ProductCategory.ProductCategoryName : "No Category")
+    </dd>
+</dl>
+
+@using (Html.BeginForm("ProductDelete", "Product", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ProductID)
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        @Html.ActionLink("Back to List", "ProductIndex", null, new { @class = "btn btn-secondary" })
+    </div>
+}

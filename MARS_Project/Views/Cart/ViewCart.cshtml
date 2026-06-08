@@ -1,0 +1,519 @@
+﻿@model MARS_Project.Models.Cart
+@{
+    ViewBag.Title = "My Cart";
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+
+<style>
+    .page-hero {
+        background: linear-gradient(135deg, #1a0a08 0%, #C0392B 60%, #8B1A14 100%);
+        padding: 48px 0 90px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #f6f7fb;
+            clip-path: ellipse(55% 100% at 50% 100%);
+        }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #fff;
+    }
+
+        .hero-inner .page-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 6px;
+        }
+
+        .hero-inner h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+    .hero-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 18px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 20px;
+        color: #fff;
+        font-size: 13px;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .hero-back-btn:hover {
+            background: rgba(255,255,255,0.28);
+            color: #fff;
+        }
+
+    /* ─── Wrapper ─── */
+    .cart-wrapper {
+        max-width: 900px;
+        margin: -55px auto 0;
+        padding: 0 16px 60px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* ─── Empty state ─── */
+    .empty-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+        padding: 60px 24px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        background: #fef3f2;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+    }
+
+        .empty-icon i {
+            font-size: 32px;
+            color: #C0392B;
+        }
+
+    .empty-card h4 {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .empty-card p {
+        font-size: 13.5px;
+        color: #aaa;
+        margin-bottom: 22px;
+    }
+
+    /* ─── Cart items card ─── */
+    .cart-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    .cart-card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .cart-card-header .hicon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #C0392B, #8B1A14);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .cart-card-header h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+    /* ─── Cart item row ─── */
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+        border-bottom: 1px solid #f5f5f5;
+        transition: background 0.15s;
+    }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item:hover {
+            background: #fefefe;
+        }
+
+    .cart-item-img {
+        width: 72px;
+        height: 72px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1.5px solid #eee;
+        flex-shrink: 0;
+    }
+
+    .cart-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .cart-item-name {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cart-item-price {
+        font-size: 13px;
+        color: #888;
+    }
+
+        .cart-item-price strong {
+            color: #C0392B;
+            font-weight: 700;
+        }
+
+    /* Qty controls */
+    .qty-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #e0e0e0;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+        font-size: 12px;
+        text-decoration: none;
+        transition: border-color 0.18s, background 0.18s, color 0.18s;
+        flex-shrink: 0;
+    }
+
+        .qty-btn:hover {
+            border-color: #C0392B;
+            background: #C0392B;
+            color: #fff;
+        }
+
+    .qty-num {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1a1a2e;
+        min-width: 24px;
+        text-align: center;
+    }
+
+    /* Line total */
+    .cart-item-total {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1a1a2e;
+        min-width: 80px;
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    /* Remove btn */
+    .btn-remove {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1.5px solid #fde8e8;
+        background: #fef3f2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #C0392B;
+        font-size: 13px;
+        transition: background 0.18s, border-color 0.18s;
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+
+        .btn-remove:hover {
+            background: #C0392B;
+            border-color: #C0392B;
+            color: #fff;
+        }
+
+    /* ─── Summary card ─── */
+    .summary-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+        overflow: hidden;
+    }
+
+    .summary-card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .summary-card-header .hicon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #C0392B, #8B1A14);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .summary-card-header h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+    .summary-body {
+        padding: 20px 24px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 9px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 13.5px;
+        color: #555;
+    }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row.total {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a1a2e;
+            padding-top: 14px;
+        }
+
+            .summary-row.total span:last-child {
+                color: #C0392B;
+            }
+
+    .btn-checkout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #C0392B, #8B1A14);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        margin-top: 16px;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(192,57,43,0.3);
+        text-decoration: none;
+        transition: opacity 0.2s, transform 0.15s;
+    }
+
+        .btn-checkout:hover {
+            opacity: 0.9;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .btn-continue {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        width: 100%;
+        padding: 11px;
+        background: transparent;
+        color: #555;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 10px;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+        .btn-continue:hover {
+            border-color: #C0392B;
+            color: #C0392B;
+        }
+
+    @@media (max-width: 576px) {
+        .page-hero {
+            padding: 36px 0 80px;
+        }
+
+        .cart-wrapper {
+            margin-top: -50px;
+        }
+
+        .cart-item {
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .cart-item-total {
+            min-width: auto;
+        }
+    }
+</style>
+
+<!-- Hero -->
+<div class="page-hero">
+    <div class="container hero-inner">
+        <div class="page-label">Shopping</div>
+        <h1><i class="fa fa-cart-shopping me-2"></i>My Cart</h1>
+        <a href="@Url.Action("Index","CustomerProduct")" class="hero-back-btn">
+            <i class="fa fa-home"></i> Home
+        </a>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="cart-wrapper">
+
+    @if (Model == null || !Model.CartItems.Any())
+    {
+        <div class="empty-card">
+            <div class="empty-icon"><i class="fa fa-cart-shopping"></i></div>
+            <h4>Your Cart is Empty</h4>
+            <p>Looks like you haven't added anything yet. Browse our products and find something you love!</p>
+            <a href="@Url.Action("Index","CustomerProduct")" class="btn-checkout" style="display:inline-flex;width:auto;padding:11px 28px;">
+                <i class="fa fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <!-- Left: Items -->
+            <div class="col-lg-8">
+                <div class="cart-card">
+                    <div class="cart-card-header">
+                        <div class="hicon"><i class="fa fa-list"></i></div>
+                        <h5>Cart Items (@Model.CartItems.Count)</h5>
+                    </div>
+
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="cart-item">
+                            <img class="cart-item-img"
+                                 src="@Url.Content(string.IsNullOrEmpty(item.Product.ImageURL) ? "~/Content/Images/andoridePhon.jpg" : item.Product.ImageURL)"
+                                 alt="@item.Product.Name" />
+
+                            <div class="cart-item-info">
+                                <div class="cart-item-name" title="@item.Product.Name">@item.Product.Name</div>
+                                <div class="cart-item-price">Unit Price: <strong>Rs. @item.Price.ToString("N0")</strong></div>
+                            </div>
+
+                            <!-- Qty controls -->
+                            <div class="qty-wrap">
+                                <a href="@Url.Action("DecreaseQty","Cart", new { id = item.CartItemID })" class="qty-btn" title="Decrease">
+                                    <i class="fa fa-minus"></i>
+                                </a>
+                                <span class="qty-num">@item.Quantity</span>
+                                <a href="@Url.Action("IncreaseQty","Cart", new { id = item.CartItemID })" class="qty-btn" title="Increase">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+
+                            <div class="cart-item-total">Rs. @((item.Price * item.Quantity).ToString("N0"))</div>
+
+                            <a href="@Url.Action("RemoveItem","Cart", new { id = item.CartItemID })" class="btn-remove" title="Remove">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right: Summary -->
+            <div class="col-lg-4">
+                <div class="summary-card">
+                    <div class="summary-card-header">
+                        <div class="hicon"><i class="fa fa-receipt"></i></div>
+                        <h5>Order Summary</h5>
+                    </div>
+                    <div class="summary-body">
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <div class="summary-row">
+                                <span>@item.Product.Name <span style="color:#aaa;font-size:12px;">x@item.Quantity</span></span>
+                                <span>Rs. @((item.Price * item.Quantity).ToString("N0"))</span>
+                            </div>
+                        }
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span>Rs. @Model.CartItems.Sum(x => x.Price * x.Quantity).ToString("N0")</span>
+                        </div>
+
+                        <a href="@Url.Action("Checkout","Cart")" class="btn-checkout">
+                            <i class="fa fa-credit-card"></i> Proceed to Checkout
+                        </a>
+                        <a href="@Url.Action("Index","CustomerProduct")" class="btn-continue">
+                            <i class="fa fa-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,442 @@
+﻿@model IEnumerable<MARS_Project.Models.User>
+@{
+    ViewBag.Title = "Manage Employees";
+    ViewBag.Active = "employees";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 2px;
+    }
+
+    .pg-sub {
+        font-size: 12.5px;
+        color: #aaa;
+        margin-bottom: 18px;
+    }
+
+    .btn-add-emp {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 20px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        color: #fff;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 3px 12px rgba(192,57,43,0.28);
+        transition: opacity 0.2s,transform 0.15s;
+    }
+
+        .btn-add-emp:hover {
+            opacity: 0.9;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .tbl-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #eee;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .tbl-head {
+        padding: 13px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .tbl-head-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .tbl-hicon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .tbl-head h6 {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .count-badge {
+        background: #eef5ff;
+        color: #1a5fa8;
+        border: 1px solid #aecbf5;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .tbl-body {
+        padding: 0 20px 16px;
+        overflow-x: auto;
+    }
+
+    #tblEmployees thead tr {
+        background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+        color: #fff !important;
+    }
+
+    #tblEmployees thead th {
+        border: none !important;
+        padding: 11px 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: #fff !important;
+    }
+
+    table.dataTable tbody tr {
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        table.dataTable tbody tr:hover {
+            background: #fefefe !important;
+        }
+
+    table.dataTable tbody td {
+        padding: 11px 14px !important;
+        font-size: 13.5px;
+        vertical-align: middle;
+        color: #444;
+    }
+
+    .u-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#1a5fa8,#3498db);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        vertical-align: middle;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    .u-name {
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .sp {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+    .sp-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .sp.active,
+    .sp.approved {
+        background: #e8f8f0;
+        color: #1a7a47;
+        border: 1px solid #b7e4cc;
+    }
+
+    .sp.inactive {
+        background: #fef3f2;
+        color: #C0392B;
+        border: 1px solid rgba(192,57,43,0.25);
+    }
+
+    .sp.pending {
+        background: #fff8e6;
+        color: #b7770d;
+        border: 1px solid #f5d87a;
+    }
+
+    .act-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #eee;
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: 12px;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.18s;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .act-btn.edit {
+            color: #2980b9;
+            border-color: #aecbf5;
+        }
+
+            .act-btn.edit:hover {
+                background: #2980b9;
+                border-color: #2980b9;
+                color: #fff;
+            }
+
+        .act-btn.activate {
+            color: #1a7a47;
+            border-color: #b7e4cc;
+        }
+
+            .act-btn.activate:hover {
+                background: #1a7a47;
+                border-color: #1a7a47;
+                color: #fff;
+            }
+
+        .act-btn.deactivate {
+            color: #b7770d;
+            border-color: #f5d87a;
+        }
+
+            .act-btn.deactivate:hover {
+                background: #b7770d;
+                border-color: #b7770d;
+                color: #fff;
+            }
+
+        .act-btn.del {
+            color: #C0392B;
+            border-color: rgba(192,57,43,0.25);
+        }
+
+            .act-btn.del:hover {
+                background: #C0392B;
+                border-color: #C0392B;
+                color: #fff;
+            }
+</style>
+
+<div class="pg-title"><i class="fa fa-user-tie me-2" style="color:#C0392B;"></i>Manage Employees</div>
+<div class="pg-sub">All employees registered in the system</div>
+
+<div class="tbl-card">
+    <div class="tbl-head">
+        <div class="tbl-head-left">
+            <div class="tbl-hicon"><i class="fa fa-user-tie"></i></div>
+            <h6>Employees List</h6>
+            <span class="count-badge">@Model.Count()</span>
+        </div>
+        <!-- Add Employee Button -->
+        <a href="@Url.Action("CreateEmployee","Admin")" class="btn-add-emp">
+            <i class="fa fa-plus"></i> Add Employee
+        </a>
+    </div>
+
+    <div class="tbl-body">
+        <table id="tblEmployees" class="table w-100" style="margin-top:14px;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Employee</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int cnt = 1; }
+                @foreach (var emp in Model)
+                {
+                    string initials = emp.Name != null && emp.Name.Length > 0 ? emp.Name[0].ToString().ToUpper() : "E";
+                    string stClass = emp.Status == "Active" || emp.Status == "Approved" ? "active"
+                                    : emp.Status == "Inactive" ? "inactive"
+                                    : emp.Status == "Pending" ? "pending" : "other";
+                    bool isActive = emp.Status == "Active" || emp.Status == "Approved";
+
+                    <tr>
+                        <td style="color:#aaa;font-size:12px;">@cnt</td>
+                        <td>
+                            <span class="u-avatar">@initials</span>
+                            <span class="u-name">@emp.Name</span>
+                        </td>
+                        <td style="font-size:13px;color:#666;">@emp.Email</td>
+                        <td style="font-size:13px;">@(string.IsNullOrEmpty(emp.ContactNumber) ? "—" : emp.ContactNumber)</td>
+                        <td style="font-size:12px;color:#aaa;">
+                            @(emp.CreatedDate.HasValue ? emp.CreatedDate.Value.ToString("MMM dd, yyyy") : "—")
+                        </td>
+                        <td>
+                            <span class="sp @stClass">
+                                <span class="sp-dot"></span>@emp.Status
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:5px;">
+                                <!-- Edit -->
+                                <a href="@Url.Action("EditEmployee","Admin", new { id = emp.UserID })"
+                                   class="act-btn edit" title="Edit Employee">
+                                    <i class="fa fa-pen"></i>
+                                </a>
+
+                                <!-- Activate / Deactivate toggle -->
+                                @if (isActive)
+                                {
+                                    <a href="@Url.Action("DeactivateEmployee","Admin", new { id = emp.UserID })"
+                                       class="act-btn deactivate btn-deactivate"
+                                       data-name="@emp.Name"
+                                       title="Deactivate Employee">
+                                        <i class="fa fa-ban"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("ActivateEmployee","Admin", new { id = emp.UserID })"
+                                       class="act-btn activate btn-activate"
+                                       data-name="@emp.Name"
+                                       title="Activate Employee">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                }
+
+                                <!-- Delete -->
+                                <a href="@Url.Action("DeleteUser","Admin", new { id = emp.UserID })"
+                                   class="act-btn del btn-delete"
+                                   data-name="@emp.Name"
+                                   title="Delete Employee">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    cnt++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tblEmployees').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    { extend:'excelHtml5', text:'<i class="fa fa-file-excel"></i> Excel', className:'dt-btn' },
+                    { extend:'pdfHtml5',   text:'<i class="fa fa-file-pdf"></i> PDF',     className:'dt-btn' },
+                    { extend:'print',      text:'<i class="fa fa-print"></i> Print',      className:'dt-btn' }
+                ],
+                pageLength: 10,
+                language: { search:'Search:', paginate:{ previous:'&lsaquo;', next:'&rsaquo;' } },
+                columnDefs: [{ orderable:false, targets:[6] }]
+            });
+        });
+
+        // Delete confirm
+        document.querySelectorAll('.btn-delete').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var url  = this.href;
+                var name = this.getAttribute('data-name') || 'this employee';
+                Swal.fire({
+                    title: 'Delete Employee?',
+                    html: 'Are you sure you want to delete <strong>' + name + '</strong>?<br><small style="color:#aaa;">This cannot be undone.</small>',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C0392B',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete!'
+                }).then(function(r) { if (r.isConfirmed) window.location.href = url; });
+            });
+        });
+
+        // Deactivate confirm
+        document.querySelectorAll('.btn-deactivate').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var url  = this.href;
+                var name = this.getAttribute('data-name') || 'this employee';
+                Swal.fire({
+                    title: 'Deactivate Employee?',
+                    html: '<strong>' + name + '</strong> will not be able to login until reactivated.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#b7770d',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, deactivate!'
+                }).then(function(r) { if (r.isConfirmed) window.location.href = url; });
+            });
+        });
+
+        // Activate confirm
+        document.querySelectorAll('.btn-activate').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var url  = this.href;
+                var name = this.getAttribute('data-name') || 'this employee';
+                Swal.fire({
+                    title: 'Activate Employee?',
+                    html: '<strong>' + name + '</strong> will be able to login after activation.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#1a7a47',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, activate!'
+                }).then(function(r) { if (r.isConfirmed) window.location.href = url; });
+            });
+        });
+
+        @if (TempData["Message"] != null) {
+            <text>
+            Swal.fire({ icon:'success', title:'Done!', text:'@TempData["Message"]', confirmButtonColor:'#C0392B', timer:2500, timerProgressBar:true });
+            </text>
+        }
+    </script>
+    <style>
+        .dt-btn {
+            background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 7px !important;
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            margin-right: 4px !important;
+        }
+
+            .dt-btn:hover {
+                opacity: 0.85 !important;
+            }
+    </style>
+}

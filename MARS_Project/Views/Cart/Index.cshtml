@@ -1,0 +1,53 @@
+﻿@model CartViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml"; // or admin layout if you use same
+}
+
+<h2>Your Cart</h2>
+
+@if (!Model.Items.Any())
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead><tr><th>Image</th><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var it in Model.Items)
+            {
+                <tr>
+                    <td><img src="@Url.Content(string.IsNullOrEmpty(it.ImageURL)? "~/Content/Images/andoridePhon.jpg" : it.ImageURL)" width="60" /></td>
+                    <td>@it.ProductName</td>
+                    <td>@it.Price.ToString("C")</td>
+                    <td>
+                        @using (Html.BeginForm("UpdateQuantity", "Cart", FormMethod.Post))
+                        {
+                            @Html.Hidden("cartItemId", it.CartItemID)
+                            <input type="number" name="qty" value="@it.Quantity" min="1" class="form-control d-inline" style="width:80px" />
+                            <button class="btn btn-sm btn-primary">Update</button>
+                        }
+                    </td>
+                    <td>@it.SubTotal.ToString("C")</td>
+                    <td>
+                        @using (Html.BeginForm("UpdateQuantity", "Cart", FormMethod.Post))
+                        {
+                            @Html.Hidden("cartItemId", it.CartItemID)
+                            @Html.Hidden("qty", 0)
+                            <button class="btn btn-sm btn-danger">Remove</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Total: @Model.Total.ToString("C")</h4>
+
+    @using (Html.BeginForm("Checkout", "Cart", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("cartId", Model.CartID)
+        <button class="btn btn-success">Place Order</button>
+    }
+}

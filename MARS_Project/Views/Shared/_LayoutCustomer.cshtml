@@ -1,0 +1,427 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title — MARS Shop</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', 'Segoe UI', sans-serif;
+            background: #f0f2f8;
+            padding-top: 70px;
+        }
+
+        /* ─── Navbar ─── */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+        }
+
+            .top-nav .nav-container {
+                width: 100%;
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+        /* Brand */
+        .brand-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-icon-wrap {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #C0392B, #8B1A14);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: 0.2px;
+        }
+
+            .brand-text span {
+                color: #C0392B;
+            }
+
+        /* Nav links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            .nav-links .nav-link-item a {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 7px 13px;
+                border-radius: 8px;
+                font-size: 13.5px;
+                font-weight: 500;
+                color: #444;
+                text-decoration: none;
+                transition: background 0.18s, color 0.18s;
+                white-space: nowrap;
+            }
+
+                .nav-links .nav-link-item a i {
+                    font-size: 13px;
+                    color: #C0392B;
+                }
+
+                .nav-links .nav-link-item a:hover {
+                    background: #fef3f2;
+                    color: #C0392B;
+                }
+
+        /* Cart badge */
+        .cart-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fef3f2;
+            color: #C0392B;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid rgba(192,57,43,0.2);
+            transition: background 0.18s;
+        }
+
+            .cart-badge:hover {
+                background: #C0392B;
+                color: #fff;
+            }
+
+        /* Auth buttons */
+        .btn-nav-login {
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #444;
+            text-decoration: none;
+            border: 1.5px solid #ddd;
+            transition: border-color 0.18s, color 0.18s;
+        }
+
+            .btn-nav-login:hover {
+                border-color: #C0392B;
+                color: #C0392B;
+            }
+
+        .btn-nav-register {
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+            background: linear-gradient(135deg, #C0392B, #8B1A14);
+            transition: opacity 0.18s;
+            box-shadow: 0 2px 10px rgba(192,57,43,0.25);
+        }
+
+            .btn-nav-register:hover {
+                opacity: 0.9;
+                color: #fff;
+            }
+
+        /* Profile avatar in nav */
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2.5px solid #C0392B;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+            .nav-avatar:hover {
+                transform: scale(1.08);
+            }
+
+        /* Mobile hamburger */
+        .nav-toggler {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px;
+            color: #333;
+            font-size: 20px;
+        }
+
+        /* Mobile menu */
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            z-index: 999;
+            padding: 12px 20px 16px;
+        }
+
+            .nav-mobile.open {
+                display: block;
+            }
+
+            .nav-mobile a {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 12px;
+                border-radius: 9px;
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+                text-decoration: none;
+                margin-bottom: 4px;
+                transition: background 0.18s;
+            }
+
+                .nav-mobile a i {
+                    color: #C0392B;
+                    font-size: 14px;
+                    width: 18px;
+                    text-align: center;
+                }
+
+                .nav-mobile a:hover {
+                    background: #fef3f2;
+                    color: #C0392B;
+                }
+
+        .mobile-divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 10px 0;
+        }
+
+        @@media (max-width: 900px) {
+            .nav-links, .nav-desktop-extra {
+                display: none !important;
+            }
+
+            .nav-toggler {
+                display: flex;
+            }
+        }
+
+        /* ─── Footer ─── */
+        .site-footer {
+            background: #1a0a08;
+            color: rgba(255,255,255,0.65);
+            padding: 22px 0;
+            margin-top: 50px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+            .site-footer strong {
+                color: #E8C97A;
+            }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ NAVBAR ═══ -->
+    <nav class="top-nav">
+        <div class="nav-container">
+
+            <!-- Brand -->
+            <a href="@Url.Action("Index","CustomerProduct")" class="brand-link">
+                <div class="brand-icon-wrap">
+                    <i class="fa fa-mobile-screen-button"></i>
+                </div>
+                <span class="brand-text">MARS <span>Shop</span></span>
+            </a>
+
+            <!-- Desktop Links -->
+            <ul class="nav-links" id="desktopNav">
+                <li class="nav-link-item">
+                    <a href="@Url.Action("Index","CustomerProduct")">
+                        <i class="fa fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-link-item">
+                    <a href="@Url.Action("Index","CustomerProduct")">
+                        <i class="fa fa-mobile-alt"></i> Products
+                    </a>
+                </li>
+                <li class="nav-link-item">
+                    <a href="@Url.Action("SubmitRepair","CustomerRepair")">
+                        <i class="fa fa-tools"></i> Repair Request
+                    </a>
+                </li>
+
+                @if (Session["UserID"] != null)
+                {
+                    if (Session["HasRepair"] != null && (bool)Session["HasRepair"])
+                    {
+                        <li class="nav-link-item">
+                            <a href="@Url.Action("MyRepairs","CustomerRepair")">
+                                <i class="fa fa-list-check"></i> My Requests
+                            </a>
+                        </li>
+                    }
+
+                    if (Session["HasOrder"] != null && (bool)Session["HasOrder"])
+                    {
+                        <li class="nav-link-item">
+                            <a href="@Url.Action("MyOrders","Cart")">
+                                <i class="fa fa-box"></i> My Orders
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+
+            <!-- Right side -->
+            <div class="d-flex align-items-center gap-2 nav-desktop-extra">
+                @if (Session["UserID"] == null)
+                {
+                    <a href="@Url.Action("Login","Home")" class="btn-nav-login">Login</a>
+                    <a href="@Url.Action("Register","Home")" class="btn-nav-register">Register</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("ViewCart","Cart")" class="cart-badge">
+                        <i class="fa fa-cart-shopping"></i>
+                        Cart <span>(@(Session["CartCount"] ?? 0))</span>
+                    </a>
+
+                    <a href="@Url.Action("Profile","CustomerProduct")" title="My Profile">
+                        <img src="@((Session["UserImage"] != null && !string.IsNullOrEmpty(Session["UserImage"].ToString()))
+                        ? Session["UserImage"].ToString()
+                        : Url.Content("~/Content/Images/avt.png"))"
+                             class="nav-avatar" alt="Profile" />
+                    </a>
+                }
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button class="nav-toggler" id="mobileToggle" aria-label="Menu">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Nav -->
+    <div class="nav-mobile" id="mobileMenu">
+        <a href="@Url.Action("Index","CustomerProduct")"><i class="fa fa-home"></i> Home</a>
+        <a href="@Url.Action("Index","CustomerProduct")"><i class="fa fa-mobile-alt"></i> Products</a>
+        <a href="@Url.Action("SubmitRepair","CustomerRepair")"><i class="fa fa-tools"></i> Repair Request</a>
+
+        @if (Session["UserID"] != null)
+        {
+            if (Session["HasRepair"] != null && (bool)Session["HasRepair"])
+            {
+                <a href="@Url.Action("MyRepairs","CustomerRepair")"><i class="fa fa-list-check"></i> My Requests</a>
+            }
+            <a href="@Url.Action("ViewCart","Cart")"><i class="fa fa-cart-shopping"></i> Cart (@(Session["CartCount"] ?? 0))</a>
+            if (Session["HasOrder"] != null && (bool)Session["HasOrder"])
+            {
+                <a href="@Url.Action("MyOrders","Cart")"><i class="fa fa-box"></i> My Orders</a>
+            }
+            <div class="mobile-divider"></div>
+            <a href="@Url.Action("Profile","CustomerProduct")"><i class="fa fa-user"></i> My Profile</a>
+            <a href="@Url.Action("Logout","Home")" style="color:#C0392B;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        }
+        else
+        {
+            <div class="mobile-divider"></div>
+            <a href="@Url.Action("Login","Home")"><i class="fa fa-sign-in-alt"></i> Login</a>
+            <a href="@Url.Action("Register","Home")"><i class="fa fa-user-plus"></i> Register</a>
+        }
+    </div>
+
+    <!-- Page Content -->
+    <div>
+        @RenderBody()
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p class="mb-0">
+                &copy; @DateTime.Now.Year <strong>MARS Mobile Shop</strong> — All Rights Reserved
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Mobile menu toggle
+        var toggler = document.getElementById('mobileToggle');
+        var menu = document.getElementById('mobileMenu');
+        toggler.addEventListener('click', function () {
+            menu.classList.toggle('open');
+            var icon = toggler.querySelector('i');
+            icon.className = menu.classList.contains('open') ? 'fa fa-xmark' : 'fa fa-bars';
+        });
+
+        // Tooltip init
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+                new bootstrap.Tooltip(el);
+            });
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,405 @@
+﻿@model IEnumerable<MARS_Project.Models.User>
+@{
+    ViewBag.Title = "Manage Users";
+    ViewBag.Active = "users";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 2px;
+    }
+
+    .pg-sub {
+        font-size: 12.5px;
+        color: #aaa;
+        margin-bottom: 18px;
+    }
+
+    .tbl-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #eee;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .tbl-head {
+        padding: 13px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .tbl-head-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .tbl-hicon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .tbl-head h6 {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .count-badge {
+        background: #fef3f2;
+        color: #C0392B;
+        border: 1px solid rgba(192,57,43,0.2);
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .tbl-body {
+        padding: 0 20px 16px;
+        overflow-x: auto;
+    }
+
+    /* Table overrides */
+    #tblUsers thead tr,
+    #tblEmployees thead tr,
+    #tblCustomers thead tr {
+        background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+        color: #fff !important;
+    }
+
+    #tblUsers thead th,
+    #tblEmployees thead th,
+    #tblCustomers thead th {
+        border: none !important;
+        padding: 11px 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: #fff !important;
+    }
+
+    table.dataTable tbody tr {
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        table.dataTable tbody tr:hover {
+            background: #fefefe !important;
+        }
+
+    table.dataTable tbody td {
+        padding: 11px 14px !important;
+        font-size: 13.5px;
+        vertical-align: middle;
+        color: #444;
+    }
+
+    /* User avatar in table */
+    .u-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#C0392B,#E8C97A);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+        vertical-align: middle;
+        margin-right: 8px;
+    }
+
+    .u-name {
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .u-email {
+        font-size: 12px;
+        color: #aaa;
+    }
+
+    /* Status pills */
+    .sp {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+    .sp-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .sp.active,
+    .sp.approved {
+        background: #e8f8f0;
+        color: #1a7a47;
+        border: 1px solid #b7e4cc;
+    }
+
+    .sp.pending {
+        background: #fff8e6;
+        color: #b7770d;
+        border: 1px solid #f5d87a;
+    }
+
+    .sp.rejected {
+        background: #fef3f2;
+        color: #C0392B;
+        border: 1px solid rgba(192,57,43,0.25);
+    }
+
+    .sp.other {
+        background: #f4f4f4;
+        color: #888;
+        border: 1px solid #ddd;
+    }
+
+    /* Role badge */
+    .role-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-weight: 600;
+    }
+
+        .role-chip.admin {
+            background: #fef3f2;
+            color: #C0392B;
+        }
+
+        .role-chip.employee {
+            background: #eef5ff;
+            color: #1a5fa8;
+        }
+
+        .role-chip.customer {
+            background: #e8f8f0;
+            color: #1a7a47;
+        }
+
+        .role-chip.norole {
+            background: #f4f4f4;
+            color: #888;
+        }
+
+    /* Action buttons */
+    .act-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #eee;
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.18s;
+    }
+
+        .act-btn.edit {
+            color: #2980b9;
+            border-color: #aecbf5;
+        }
+
+            .act-btn.edit:hover {
+                background: #2980b9;
+                border-color: #2980b9;
+                color: #fff;
+            }
+
+        .act-btn.del {
+            color: #C0392B;
+            border-color: rgba(192,57,43,0.25);
+        }
+
+            .act-btn.del:hover {
+                background: #C0392B;
+                border-color: #C0392B;
+                color: #fff;
+            }
+
+        .act-btn.approve {
+            color: #1a7a47;
+            border-color: #b7e4cc;
+        }
+
+            .act-btn.approve:hover {
+                background: #1a7a47;
+                border-color: #1a7a47;
+                color: #fff;
+            }
+
+        .act-btn.reject {
+            color: #b7770d;
+            border-color: #f5d87a;
+        }
+
+            .act-btn.reject:hover {
+                background: #b7770d;
+                border-color: #b7770d;
+                color: #fff;
+            }
+</style>
+
+<div class="pg-title"><i class="fa fa-users me-2" style="color:#C0392B;"></i>Manage Users</div>
+<div class="pg-sub">All registered users in the system</div>
+
+<div class="tbl-card">
+    <div class="tbl-head">
+        <div class="tbl-head-left">
+            <div class="tbl-hicon"><i class="fa fa-users"></i></div>
+            <h6>All Users</h6>
+            <span class="count-badge">@Model.Count()</span>
+        </div>
+    </div>
+
+    <div class="tbl-body">
+        <table id="tblUsers" class="table w-100" style="margin-top:14px;">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    string initials = u.Name != null && u.Name.Length > 0 ? u.Name[0].ToString().ToUpper() : "?";
+                    string stClass = u.Status == "Approved" || u.Status == "Active" ? "approved"
+                                    : u.Status == "Pending" ? "pending"
+                                    : u.Status == "Rejected" ? "rejected" : "other";
+                    string roleClass = u.UserType?.UserTypeName == "Admin" ? "admin"
+                                     : u.UserType?.UserTypeName == "Employee" ? "employee"
+                                     : u.UserType?.UserTypeName == "Customer" ? "customer" : "norole";
+
+                    <tr>
+                        <td>
+                            <span class="u-avatar">@initials</span>
+                            <span class="u-name">@u.Name</span>
+                        </td>
+                        <td style="font-size:13px;color:#666;">@u.Email</td>
+                        <td>
+                            <span class="role-chip @roleClass">
+                                <i class="fa @(roleClass == "admin" ? "fa-shield-halved" : roleClass == "employee" ? "fa-user-tie" : "fa-user")" style="font-size:10px;"></i>
+                                @(u.UserType?.UserTypeName ?? "No Role")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="sp @stClass">
+                                <span class="sp-dot"></span>@u.Status
+                            </span>
+                        </td>
+                        <td style="font-size:12px;color:#aaa;">
+                            @(u.CreatedDate.HasValue ? u.CreatedDate.Value.ToString("MMM dd, yyyy") : "—")
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:5px;align-items:center;">
+                                <a href="@Url.Action("EditUser","Admin", new { id = u.UserID })" class="act-btn edit" title="Edit">
+                                    <i class="fa fa-pen"></i>
+                                </a>
+                                @if (u.Status == "Pending")
+                                {
+                                    <a href="@Url.Action("ApproveUser","Admin", new { id = u.UserID })" class="act-btn approve" title="Approve">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                    <a href="@Url.Action("RejectUser","Admin", new { id = u.UserID })" class="act-btn reject" title="Reject">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                }
+                                <a href="@Url.Action("DeleteUser","Admin", new { id = u.UserID })" class="act-btn del btn-delete" title="Delete">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tblUsers').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    { extend: 'excelHtml5', text: '<i class="fa fa-file-excel"></i> Excel', className: 'dt-btn' },
+                    { extend: 'csvHtml5', text: '<i class="fa fa-file-csv"></i> CSV', className: 'dt-btn' },
+                    { extend: 'pdfHtml5', text: '<i class="fa fa-file-pdf"></i> PDF', className: 'dt-btn' },
+                    { extend: 'print', text: '<i class="fa fa-print"></i> Print', className: 'dt-btn' }
+                ],
+                pageLength: 10,
+                order: [[4, 'desc']],
+                language: { search: 'Search:', paginate: { previous: '&lsaquo;', next: '&rsaquo;' } }
+            });
+        });
+
+        document.querySelectorAll('.btn-delete').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var url = this.href;
+                Swal.fire({
+                    title: 'Delete this user?',
+                    text: 'This action cannot be undone!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C0392B',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete!'
+                }).then(function (r) { if (r.isConfirmed) window.location.href = url; });
+            });
+        });
+    </script>
+    <style>
+        .dt-btn {
+            background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 7px !important;
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            margin-right: 4px !important;
+        }
+
+            .dt-btn:hover {
+                opacity: 0.85 !important;
+            }
+    </style>
+}

@@ -1,0 +1,423 @@
+﻿@model IEnumerable<MARS_Project.Models.RepairRequest>
+@{
+    ViewBag.Title = "Assigned Requests";
+    ViewBag.Active = "requests";
+    Layout = "~/Views/Shared/_LayoutEmployee.cshtml";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .page-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 3px;
+    }
+
+    .page-sub {
+        font-size: 12.5px;
+        color: #aaa;
+    }
+
+    /* Summary pills */
+    .summary-pills {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .s-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+
+    .pill-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .s-pill.all .pill-icon {
+        background: #fef3f2;
+        color: #C0392B;
+    }
+
+    .s-pill.pend .pill-icon {
+        background: #fff8e6;
+        color: #b7770d;
+    }
+
+    .s-pill.prog .pill-icon {
+        background: #eef5ff;
+        color: #1a5fa8;
+    }
+
+    .s-pill.done .pill-icon {
+        background: #e8f8f0;
+        color: #1a7a47;
+    }
+
+    .pill-val {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1a1a2e;
+        line-height: 1;
+    }
+
+    .pill-label {
+        font-size: 10.5px;
+        color: #aaa;
+        font-weight: 500;
+    }
+
+    /* Empty */
+    .empty-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        padding: 52px 24px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 68px;
+        height: 68px;
+        background: #fef3f2;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+    }
+
+        .empty-icon i {
+            font-size: 26px;
+            color: #C0392B;
+        }
+
+    .empty-card h5 {
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 6px;
+    }
+
+    .empty-card p {
+        font-size: 13px;
+        color: #aaa;
+        margin: 0;
+    }
+
+    /* Request card */
+    .req-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        overflow: hidden;
+        margin-bottom: 14px;
+        transition: box-shadow 0.2s;
+    }
+
+        .req-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+        }
+
+    .req-card-top {
+        height: 4px;
+    }
+
+        .req-card-top.pending {
+            background: linear-gradient(90deg,#f39c12,#e67e22);
+        }
+
+        .req-card-top.inprogress {
+            background: linear-gradient(90deg,#2980b9,#3498db);
+        }
+
+        .req-card-top.completed {
+            background: linear-gradient(90deg,#1a7a47,#27ae60);
+        }
+
+    .req-card-body {
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .req-id-badge {
+        width: 50px;
+        height: 50px;
+        background: #fef3f2;
+        border-radius: 13px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+        .req-id-badge span:first-child {
+            font-size: 9px;
+            font-weight: 700;
+            color: #C0392B;
+            text-transform: uppercase;
+        }
+
+        .req-id-badge span:last-child {
+            font-size: 15px;
+            font-weight: 700;
+            color: #C0392B;
+            line-height: 1;
+        }
+
+    .req-content {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .req-customer {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .req-customer i {
+            font-size: 11px;
+            color: #C0392B;
+        }
+
+    .req-desc {
+        font-size: 13.5px;
+        color: #555;
+        line-height: 1.5;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .req-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: #aaa;
+        font-weight: 500;
+    }
+
+        .meta-chip i {
+            font-size: 11px;
+            color: #C0392B;
+        }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+        .status-pill.pending {
+            background: #fff8e6;
+            color: #b7770d;
+            border: 1px solid #f5d87a;
+        }
+
+        .status-pill.inprogress {
+            background: #eef5ff;
+            color: #1a5fa8;
+            border: 1px solid #aecbf5;
+        }
+
+        .status-pill.completed {
+            background: #e8f8f0;
+            color: #1a7a47;
+            border: 1px solid #b7e4cc;
+        }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .req-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .img-thumbs {
+        display: flex;
+        gap: 6px;
+    }
+
+    .img-thumb {
+        width: 42px;
+        height: 42px;
+        border-radius: 9px;
+        overflow: hidden;
+        border: 1.5px solid #eee;
+        flex-shrink: 0;
+    }
+
+        .img-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+        .img-thumb:hover img {
+            transform: scale(1.1);
+        }
+
+    .img-thumb-empty {
+        width: 42px;
+        height: 42px;
+        border-radius: 9px;
+        background: #f5f5f5;
+        border: 1.5px dashed #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ddd;
+        font-size: 14px;
+    }
+
+    .btn-respond {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 18px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        color: #fff;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: opacity 0.2s,transform 0.15s;
+        border: none;
+        box-shadow: 0 3px 12px rgba(192,57,43,0.28);
+        white-space: nowrap;
+    }
+
+        .btn-respond:hover {
+            opacity: 0.9;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="page-header">
+    <div>
+        <div class="page-title"><i class="fa fa-wrench me-2" style="color:#C0392B;"></i>Assigned Repair Requests</div>
+        <div class="page-sub">Review and respond to requests assigned to you</div>
+    </div>
+</div>
+
+@{
+    int total = Model.Count();
+    int pending = Model.Count(r => r.Status == "Pending");
+    int inprog = Model.Count(r => r.Status == "In Progress");
+    int done = Model.Count(r => r.Status == "Completed");
+}
+
+<div class="summary-pills">
+    <div class="s-pill all"> <div class="pill-icon"><i class="fa fa-list"></i></div> <div><div class="pill-val">@total</div><div class="pill-label">Total</div></div> </div>
+    <div class="s-pill pend"><div class="pill-icon"><i class="fa fa-clock"></i></div> <div><div class="pill-val">@pending</div><div class="pill-label">Pending</div></div> </div>
+    <div class="s-pill prog"><div class="pill-icon"><i class="fa fa-spinner"></i></div><div><div class="pill-val">@inprog</div><div class="pill-label">In Progress</div></div></div>
+    <div class="s-pill done"><div class="pill-icon"><i class="fa fa-check"></i></div>  <div><div class="pill-val">@done</div><div class="pill-label">Completed</div></div></div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-card">
+        <div class="empty-icon"><i class="fa fa-wrench"></i></div>
+        <h5>No Requests Assigned</h5>
+        <p>You have no repair requests assigned to you at the moment.</p>
+    </div>
+}
+else
+{
+    foreach (var req in Model)
+    {
+        string sc = req.Status == "Pending" ? "pending" : req.Status == "In Progress" ? "inprogress" : req.Status == "Completed" ? "completed" : "pending";
+        <div class="req-card">
+            <div class="req-card-top @sc"></div>
+            <div class="req-card-body">
+                <div class="req-id-badge"><span>REQ</span><span>#@req.RequestID</span></div>
+                <div class="req-content">
+                    <div class="req-customer"><i class="fa fa-user"></i>@(req.User?.Name ?? "Unknown Customer")</div>
+                    <div class="req-desc">@req.ProblemDescription</div>
+                    <div class="req-meta">
+                        <div class="meta-chip"><i class="fa fa-calendar"></i> @req.RequestDate?.ToString("MMM dd, yyyy")</div>
+                        <div class="meta-chip"><i class="fa fa-clock"></i> @req.RequestDate?.ToString("hh:mm tt")</div>
+                        <span class="status-pill @sc"><span class="status-dot"></span> @req.Status</span>
+                    </div>
+                </div>
+                <div class="req-right">
+                    <div class="img-thumbs">
+                        @if (!string.IsNullOrEmpty(req.ProblemImage1))
+                        {<a href="@req.ProblemImage1" target="_blank" class="img-thumb"><img src="@req.ProblemImage1" alt="img" /></a> }
+                        else
+                        { <div class="img-thumb-empty"><i class="fa fa-image"></i></div>}
+                        @if (!string.IsNullOrEmpty(req.ProblemImage2))
+                        {<a href="@req.ProblemImage2" target="_blank" class="img-thumb"><img src="@req.ProblemImage2" alt="img" /></a> }
+                        else
+                        { <div class="img-thumb-empty"><i class="fa fa-image"></i></div>}
+                        @if (!string.IsNullOrEmpty(req.ProblemImage3))
+                        {<a href="@req.ProblemImage3" target="_blank" class="img-thumb"><img src="@req.ProblemImage3" alt="img" /></a> }
+                        else
+                        { <div class="img-thumb-empty"><i class="fa fa-image"></i></div>}
+                    </div>
+                    <a href="@Url.Action("RespondToRequest","Employee", new { id = req.RequestID })" class="btn-respond">
+                        <i class="fa fa-reply"></i> Respond
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+}

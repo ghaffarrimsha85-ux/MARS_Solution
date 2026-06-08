@@ -1,0 +1,493 @@
+﻿@model MARS_Project.Models.User
+@{
+    ViewBag.Title = "Edit Profile";
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+
+<style>
+    /* ─── Hero ─── */
+    .edit-hero {
+        background: linear-gradient(135deg, #1a0a08 0%, #C0392B 60%, #8B1A14 100%);
+        padding: 48px 0 90px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .edit-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .edit-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #f0f2f8;
+            clip-path: ellipse(55% 100% at 50% 100%);
+        }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #fff;
+    }
+
+        .hero-inner .page-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 6px;
+        }
+
+        .hero-inner h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+    .hero-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 18px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 20px;
+        color: #fff;
+        font-size: 13px;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .hero-back-btn:hover {
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+        }
+
+    /* ─── Wrapper ─── */
+    .edit-wrapper {
+        max-width: 660px;
+        margin: -60px auto 0;
+        padding: 0 16px 60px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* ─── Avatar upload card ─── */
+    .avatar-upload-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.09);
+        border: 1px solid #eee;
+        padding: 28px;
+        text-align: center;
+        margin-bottom: 18px;
+    }
+
+    .avatar-ring {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, #C0392B, #E8C97A);
+        display: inline-block;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+        .avatar-ring img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            display: block;
+        }
+
+    .photo-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 20px;
+        background: transparent;
+        border: 2px solid #C0392B;
+        border-radius: 20px;
+        color: #C0392B;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+    }
+
+        .photo-btn:hover {
+            background: #C0392B;
+            color: #fff;
+        }
+
+    .photo-hint {
+        font-size: 11.5px;
+        color: #bbb;
+        margin-top: 8px;
+    }
+
+    /* ─── Form card ─── */
+    .form-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+        border: 1px solid #eee;
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+
+    .form-card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fafafa;
+    }
+
+        .form-card-header .hicon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #C0392B, #8B1A14);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .form-card-header h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+    .form-card-body {
+        padding: 24px;
+    }
+
+    /* ─── Fields ─── */
+    .field-group {
+        margin-bottom: 20px;
+    }
+
+        .field-group label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 7px;
+        }
+
+    .field-wrap {
+        position: relative;
+    }
+
+        .field-wrap .f-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #C0392B;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .field-wrap .f-icon-top {
+            position: absolute;
+            left: 13px;
+            top: 13px;
+            color: #C0392B;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .field-wrap input,
+        .field-wrap textarea {
+            width: 100%;
+            padding: 11px 14px 11px 40px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 11px;
+            font-size: 14px;
+            color: #1a1a2e;
+            font-family: inherit;
+            background: #fdfdfd;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .field-wrap textarea {
+            resize: none;
+            height: 90px;
+            padding-top: 11px;
+        }
+
+            .field-wrap input:focus,
+            .field-wrap textarea:focus {
+                border-color: #C0392B;
+                box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+                background: #fff;
+            }
+
+        .field-wrap input[readonly] {
+            background: #f5f5f5;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+    .readonly-hint {
+        font-size: 11px;
+        color: #bbb;
+        margin-top: 4px;
+    }
+
+    /* two column grid */
+    .fields-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 20px;
+    }
+
+    .field-group.full {
+        grid-column: 1 / -1;
+    }
+
+    /* ─── Save button ─── */
+    .save-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+        border: 1px solid #eee;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .save-card .save-hint {
+            font-size: 13px;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+    .btn-save {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 32px;
+        background: linear-gradient(135deg, #C0392B, #8B1A14);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 14.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.15s;
+        box-shadow: 0 4px 16px rgba(192,57,43,0.3);
+        text-decoration: none;
+    }
+
+        .btn-save:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        .btn-save:active {
+            transform: translateY(0);
+        }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 24px;
+        background: transparent;
+        color: #888;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+        .btn-cancel:hover {
+            border-color: #C0392B;
+            color: #C0392B;
+        }
+
+    @@media (max-width: 576px) {
+        .edit-hero {
+            padding: 36px 0 80px;
+        }
+
+        .edit-wrapper {
+            margin-top: -50px;
+        }
+
+        .fields-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .field-group.full {
+            grid-column: auto;
+        }
+
+        .form-card-body {
+            padding: 16px;
+        }
+
+        .save-card {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-save, .btn-cancel {
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Hero -->
+<div class="edit-hero">
+    <div class="container hero-inner">
+        <div class="page-label">Account</div>
+        <h1>Edit Profile</h1>
+        <a href="@Url.Action("Profile","CustomerProduct")" class="hero-back-btn">
+            <i class="fa fa-arrow-left"></i> Back to Profile
+        </a>
+    </div>
+</div>
+
+<!-- Edit Form -->
+<div class="edit-wrapper">
+
+    @using (Html.BeginForm("EditProfile", "CustomerProduct", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <!-- Avatar Upload -->
+        <div class="avatar-upload-card">
+            <div class="avatar-ring">
+                <img id="previewImage"
+                     src="@(!string.IsNullOrEmpty(Model.ProfileImage) ? Model.ProfileImage : Url.Content("~/Content/Images/avt.png"))"
+                     alt="Profile Photo" />
+            </div>
+            <div>
+                <label class="photo-btn">
+                    <i class="fa fa-camera"></i> Change Photo
+                    <input type="file" name="ProfileImageFile" id="ProfileImageFile" accept="image/*" hidden />
+                </label>
+            </div>
+            <div class="photo-hint">JPG, PNG up to 2MB recommended</div>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="form-card">
+            <div class="form-card-header">
+                <div class="hicon"><i class="fa fa-user"></i></div>
+                <h5>Personal Information</h5>
+            </div>
+            <div class="form-card-body">
+                <div class="fields-grid">
+
+                    <div class="field-group full">
+                        <label>Full Name</label>
+                        <div class="field-wrap">
+                            <i class="fa fa-user f-icon"></i>
+                            @Html.TextBoxFor(m => m.Name, new { placeholder = "Your full name", autocomplete = "name" })
+                        </div>
+                    </div>
+
+                    <div class="field-group full">
+                        <label>Email Address</label>
+                        <div class="field-wrap">
+                            <i class="fa fa-envelope f-icon"></i>
+                            @Html.TextBoxFor(m => m.Email, new { placeholder = "Email address", @readonly = "readonly" })
+                        </div>
+                        <div class="readonly-hint"><i class="fa fa-lock"></i> Email cannot be changed</div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Contact Number</label>
+                        <div class="field-wrap">
+                            <i class="fa fa-phone f-icon"></i>
+                            @Html.TextBoxFor(m => m.ContactNumber, new { placeholder = "03xx-xxxxxxx", autocomplete = "tel" })
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Address</label>
+                        <div class="field-wrap">
+                            <i class="fa fa-map-marker-alt f-icon-top"></i>
+                            @Html.TextAreaFor(m => m.Address, new { placeholder = "Your address", style = "padding-left:40px;" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Save / Cancel -->
+        <div class="save-card">
+            <a href="@Url.Action("Profile","CustomerProduct")" class="btn-cancel">
+                <i class="fa fa-times"></i> Cancel
+            </a>
+            <button type="submit" class="btn-save">
+                <i class="fa fa-save"></i> Save Changes
+            </button>
+        </div>
+    }
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Image preview
+    document.getElementById("ProfileImageFile").addEventListener("change", function (e) {
+        var file = e.target.files[0];
+        if (file) {
+            document.getElementById("previewImage").src = URL.createObjectURL(file);
+        }
+    });
+</script>
+
+@if (TempData["Message"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated!',
+            text: '@TempData["Message"]',
+            confirmButtonColor: '#C0392B',
+            borderRadius: '16px'
+        });
+    </script>
+}
+
+@section Scripts { }

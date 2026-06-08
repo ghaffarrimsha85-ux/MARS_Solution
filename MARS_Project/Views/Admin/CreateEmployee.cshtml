@@ -1,0 +1,169 @@
+﻿@{
+    ViewBag.Title = "Add Employee";
+    ViewBag.Active = "employees";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title { font-size:1.15rem; font-weight:700; color:#1a1a2e; margin-bottom:2px; }
+    .pg-sub   { font-size:12.5px; color:#aaa; margin-bottom:20px; }
+    .form-wrapper { max-width:520px; }
+
+    .f-card { background:#fff; border-radius:14px; border:1px solid #eee; box-shadow:0 3px 14px rgba(0,0,0,0.05); overflow:hidden; margin-bottom:14px; }
+    .f-head { padding:13px 20px; border-bottom:1px solid #f0f0f0; background:#fafafa; display:flex; align-items:center; gap:10px; }
+    .f-head .fhi { width:30px; height:30px; background:linear-gradient(135deg,#C0392B,#8B1A14); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; }
+    .f-head h6 { font-size:13.5px; font-weight:700; color:#1a1a2e; margin:0; }
+    .f-body { padding:20px 22px; }
+
+    .hint-box { background:#eef5ff; border:1px solid #aecbf5; border-radius:10px; padding:12px 15px; display:flex; align-items:flex-start; gap:10px; margin-bottom:16px; font-size:12.5px; color:#1a5fa8; line-height:1.5; }
+    .hint-box i { font-size:14px; flex-shrink:0; margin-top:1px; }
+
+    .fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
+    .field { margin-bottom:18px; }
+    .field.full { grid-column:1/-1; }
+    .field label { display:block; font-size:11px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:6px; }
+
+    .fw { position:relative; }
+    .fw .fi { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#C0392B; font-size:13px; pointer-events:none; }
+    .fw input {
+        width:100%; padding:10px 13px 10px 37px;
+        border:1.5px solid #e5e7eb; border-radius:10px;
+        font-size:13.5px; color:#1a1a2e;
+        background:#fdfdfd; outline:none;
+        font-family:'DM Sans',sans-serif;
+        transition:border-color 0.2s,box-shadow 0.2s;
+    }
+    .fw input:focus { border-color:#C0392B; box-shadow:0 0 0 3px rgba(192,57,43,0.1); background:#fff; }
+
+    /* Eye toggle */
+    .eye-btn { position:absolute; right:11px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; padding:2px; display:flex; align-items:center; color:#bbb; transition:color 0.18s; }
+    .eye-btn:hover { color:#C0392B; }
+    .eye-btn i { font-size:13px; }
+
+    /* Strength bar */
+    .strength-bar { height:3px; border-radius:2px; background:#f0f0f0; overflow:hidden; margin-top:5px; }
+    .strength-fill { height:100%; border-radius:2px; width:0; transition:width 0.3s,background 0.3s; }
+    .strength-label { font-size:10.5px; color:#aaa; margin-top:3px; }
+
+    .action-bar { background:#fff; border-radius:14px; border:1px solid #eee; box-shadow:0 3px 14px rgba(0,0,0,0.05); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .btn-save { display:inline-flex; align-items:center; gap:7px; padding:10px 24px; background:linear-gradient(135deg,#C0392B,#8B1A14); color:#fff; border:none; border-radius:11px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(192,57,43,0.28); transition:opacity 0.2s,transform 0.15s; }
+    .btn-save:hover { opacity:0.9; transform:translateY(-1px); }
+    .btn-back { display:inline-flex; align-items:center; gap:6px; padding:9px 18px; background:transparent; color:#555; border:1.5px solid #e0e0e0; border-radius:11px; font-size:13.5px; font-weight:600; text-decoration:none; transition:border-color 0.2s,color 0.2s; }
+    .btn-back:hover { border-color:#C0392B; color:#C0392B; }
+
+    @@media(max-width:540px) {
+        .fields-grid { grid-template-columns:1fr; }
+        .field.full { grid-column:auto; }
+        .f-body { padding:16px; }
+        .action-bar { flex-direction:column; }
+        .btn-save, .btn-back { width:100%; justify-content:center; }
+    }
+</style>
+
+<div class="pg-title"><i class="fa fa-user-plus me-2" style="color:#C0392B;"></i>Add New Employee</div>
+<div class="pg-sub">Create a new employee account — employee will use this email and password to login</div>
+
+<div class="form-wrapper">
+
+    <div class="hint-box">
+        <i class="fa fa-circle-info"></i>
+        Employee account is created by Admin only. The employee will login with the email and password you set here. Their role is automatically set to Employee.
+    </div>
+
+    @using (Html.BeginForm("CreateEmployee", "Admin", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="f-card">
+            <div class="f-head">
+                <div class="fhi"><i class="fa fa-user-tie"></i></div>
+                <h6>Employee Information</h6>
+            </div>
+            <div class="f-body">
+                <div class="fields-grid">
+
+                    <div class="field full">
+                        <label>Full Name</label>
+                        <div class="fw">
+                            <i class="fi fa fa-user"></i>
+                            <input type="text" name="Name" placeholder="Employee full name" required autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="field full">
+                        <label>Email Address</label>
+                        <div class="fw">
+                            <i class="fi fa fa-envelope"></i>
+                            <input type="email" name="Email" placeholder="employee@mars.com" required autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Contact Number</label>
+                        <div class="fw">
+                            <i class="fi fa fa-phone"></i>
+                            <input type="text" name="ContactNumber" placeholder="03xx-xxxxxxx" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Address</label>
+                        <div class="fw">
+                            <i class="fi fa fa-map-marker-alt"></i>
+                            <input type="text" name="Address" placeholder="Employee address" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="field full">
+                        <label>Password</label>
+                        <div class="fw">
+                            <i class="fi fa fa-lock"></i>
+                            <input type="password" name="Password" id="empPwd" placeholder="Set a strong password" required autocomplete="new-password" />
+                            <button type="button" class="eye-btn" onclick="toggleEye('empPwd','eyeEmp')">
+                                <i class="fa fa-eye" id="eyeEmp"></i>
+                            </button>
+                        </div>
+                        <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                        <div class="strength-label" id="strengthLabel"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <a href="@Url.Action("ManageEmployees","Admin")" class="btn-back">
+                <i class="fa fa-arrow-left"></i> Back
+            </a>
+            <button type="submit" class="btn-save">
+                <i class="fa fa-user-plus"></i> Create Employee
+            </button>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>function toggleEye(inputId, iconId) {
+            var inp  = document.getElementById(inputId);
+            var icon = document.getElementById(iconId);
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            icon.className = inp.type === 'password' ? 'fa fa-eye' : 'fa fa-eye-slash';
+        }
+
+        document.getElementById('empPwd').addEventListener('input', function() {
+            var v = this.value;
+            var s = 0;
+            if (v.length >= 6) s++;
+            if (v.length >= 10) s++;
+            if (/[A-Z]/.test(v)) s++;
+            if (/[0-9]/.test(v)) s++;
+            if (/[^A-Za-z0-9]/.test(v)) s++;
+            var pcts = ['0%','25%','45%','70%','90%','100%'];
+            var clrs = ['#ccc','#e74c3c','#e67e22','#f1c40f','#2ecc71','#27ae60'];
+            var lbls = ['','Weak','Fair','Good','Strong','Very Strong'];
+            document.getElementById('strengthFill').style.width      = v.length ? pcts[s] : '0%';
+            document.getElementById('strengthFill').style.background = clrs[s];
+            document.getElementById('strengthLabel').textContent     = v.length ? lbls[s] : '';
+            document.getElementById('strengthLabel').style.color     = clrs[s];
+        });</script>
+}

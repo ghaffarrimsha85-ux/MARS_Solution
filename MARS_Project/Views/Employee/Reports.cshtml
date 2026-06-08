@@ -1,0 +1,213 @@
+﻿@model IEnumerable<MARS_Project.Models.RepairRequest>
+@{
+    ViewBag.Title = "Reports";
+    ViewBag.Active = "reports";
+    Layout = "~/Views/Shared/_LayoutEmployee.cshtml";
+}
+
+<style>
+    .page-title { font-size:1.2rem; font-weight:700; color:#1a1a2e; margin-bottom:3px; }
+    .page-sub   { font-size:12.5px; color:#aaa; margin-bottom:18px; }
+
+    /* ── 4 stat cards in ONE row ── */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+
+    .stat-card {
+        background:#fff;
+        border-radius:14px;
+        border:1px solid #eee;
+        box-shadow:0 3px 12px rgba(0,0,0,0.05);
+        padding:16px;
+        display:flex;
+        align-items:center;
+        gap:12px;
+    }
+
+    .stat-icon {
+        width:42px; height:42px;
+        border-radius:11px;
+        display:flex; align-items:center; justify-content:center;
+        font-size:17px; flex-shrink:0;
+    }
+
+    .stat-icon.red    { background:#fef3f2; color:#C0392B; }
+    .stat-icon.amber  { background:#fff8e6; color:#b7770d; }
+    .stat-icon.blue   { background:#eef5ff; color:#1a5fa8; }
+    .stat-icon.green  { background:#e8f8f0; color:#1a7a47; }
+
+    .stat-label { font-size:10.5px; font-weight:600; color:#aaa; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:2px; }
+    .stat-value { font-size:22px; font-weight:700; color:#1a1a2e; line-height:1; }
+
+    /* ── Cost banner ── */
+    .cost-banner {
+        background:linear-gradient(135deg,#1a0a08,#C0392B);
+        border-radius:14px;
+        padding:18px 24px;
+        display:flex; align-items:center; justify-content:space-between;
+        flex-wrap:wrap; gap:12px;
+        margin-bottom:18px;
+        position:relative; overflow:hidden;
+    }
+    .cost-banner::before {
+        content:''; position:absolute; inset:0;
+        background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);
+        background-size:28px 28px;
+    }
+    .cost-banner-left { position:relative;z-index:2; }
+    .cost-banner-label { font-size:10.5px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:4px; }
+    .cost-banner-value { font-size:1.8rem; font-weight:700; color:#fff; }
+    .cost-banner-icon { position:relative;z-index:2; width:52px; height:52px; background:rgba(255,255,255,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; border:2px solid rgba(255,255,255,0.2); }
+
+    /* ── Chart + Table ── */
+    .chart-card, .table-card { background:#fff; border-radius:14px; border:1px solid #eee; box-shadow:0 3px 12px rgba(0,0,0,0.05); overflow:hidden; margin-bottom:16px; }
+    .c-header { padding:13px 18px; border-bottom:1px solid #f0f0f0; background:#fafafa; display:flex; align-items:center; gap:10px; }
+    .c-header .hicon { width:30px;height:30px; background:linear-gradient(135deg,#C0392B,#8B1A14); border-radius:8px; display:flex;align-items:center;justify-content:center; color:#fff;font-size:13px; }
+    .c-header h6 { font-size:13.5px; font-weight:700; color:#1a1a2e; margin:0; }
+    .chart-body { padding:16px; display:flex; justify-content:center; }
+    .table-body  { padding:14px 18px; overflow-x:auto; }
+
+    .status-pill { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; }
+    .status-pill.pending   { background:#fff8e6; color:#b7770d; border:1px solid #f5d87a; }
+    .status-pill.inprog    { background:#eef5ff; color:#1a5fa8; border:1px solid #aecbf5; }
+    .status-pill.completed { background:#e8f8f0; color:#1a7a47; border:1px solid #b7e4cc; }
+    .status-dot { width:5px;height:5px;border-radius:50%;background:currentColor; }
+
+    @@media(max-width:640px) {
+        .stats-row { grid-template-columns:repeat(2,1fr); }
+    }
+    @@media(max-width:360px) {
+        .stats-row { grid-template-columns:1fr 1fr; }
+    }
+</style>
+
+<div class="page-title"><i class="fa fa-chart-line me-2" style="color:#C0392B;"></i>My Work Reports</div>
+<div class="page-sub">Your repair work summary and performance overview</div>
+
+<!-- ── 4 stat cards — ONE row ── -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-icon red"><i class="fa fa-list"></i></div>
+        <div><div class="stat-label">Total Assigned</div><div class="stat-value">@(ViewBag.TotalAssigned ?? 0)</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon amber"><i class="fa fa-clock"></i></div>
+        <div><div class="stat-label">Pending</div><div class="stat-value">@(ViewBag.Pending ?? 0)</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa fa-reply"></i></div>
+        <div><div class="stat-label">Responded</div><div class="stat-value">@(ViewBag.Responded ?? 0)</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fa fa-check-circle"></i></div>
+        <div><div class="stat-label">Completed</div><div class="stat-value">@(ViewBag.Completed ?? 0)</div></div>
+    </div>
+</div>
+
+<!-- ── Cost banner ── -->
+<div class="cost-banner">
+    <div class="cost-banner-left">
+        <div class="cost-banner-label">Total Estimated Cost</div>
+        <div class="cost-banner-value">Rs. @(ViewBag.TotalEstimatedCost != null ? ((decimal)ViewBag.TotalEstimatedCost).ToString("N0") : "0")</div>
+    </div>
+    <div class="cost-banner-icon"><i class="fa fa-coins"></i></div>
+</div>
+
+<!-- ── Chart + Table ── -->
+<div class="row">
+    <div class="col-lg-4">
+        <div class="chart-card">
+            <div class="c-header">
+                <div class="hicon"><i class="fa fa-chart-pie"></i></div>
+                <h6>Status Overview</h6>
+            </div>
+            <div class="chart-body">
+                <canvas id="statusChart" style="max-width:230px;max-height:230px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="table-card">
+            <div class="c-header">
+                <div class="hicon"><i class="fa fa-table-list"></i></div>
+                <h6>Detailed Assigned Requests</h6>
+            </div>
+            <div class="table-body">
+                <table id="reportTable" class="table table-hover align-middle" style="font-size:13px;width:100%;">
+                    <thead style="background:linear-gradient(135deg,#C0392B,#8B1A14);color:#fff;">
+                        <tr>
+                            <th style="padding:10px 12px;border:none;font-size:11.5px;font-weight:600;">Req #</th>
+                            <th style="padding:10px 12px;border:none;font-size:11.5px;font-weight:600;">Description</th>
+                            <th style="padding:10px 12px;border:none;font-size:11.5px;font-weight:600;">Date</th>
+                            <th style="padding:10px 12px;border:none;font-size:11.5px;font-weight:600;">Status</th>
+                            <th style="padding:10px 12px;border:none;font-size:11.5px;font-weight:600;">Assigned To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var req in Model)
+                        {
+                            string sc = req.Status == "Pending" ? "pending" : req.Status == "In Progress" ? "inprog" : "completed";
+                            <tr>
+                                <td><span style="font-weight:700;color:#C0392B;">#@req.RequestID</span></td>
+                                <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@req.ProblemDescription</td>
+                                <td style="white-space:nowrap;color:#aaa;font-size:12px;">@req.RequestDate?.ToString("MMM dd, yyyy")</td>
+                                <td><span class="status-pill @sc"><span class="status-dot"></span> @req.Status</span></td>
+                                <td>@req.User1?.Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending','Responded','Completed'],
+                datasets: [{
+                    data: [@(ViewBag.PendingCount??0), @(ViewBag.RespondedCount??0), @(ViewBag.CompletedCount??0)],
+                    backgroundColor: ['#f39c12','#3498db','#27ae60'],
+                    borderWidth: 0, hoverOffset: 6
+                }]
+            },
+            options: {
+                cutout: '68%',
+                plugins: { legend: { position:'bottom', labels:{ font:{ family:'DM Sans',size:11 }, padding:12 } } }
+            }
+        });
+
+        $(document).ready(function () {
+            $('#reportTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    { extend:'excelHtml5', text:'<i class="fa fa-file-excel"></i> Excel', className:'dt-btn' },
+                    { extend:'csvHtml5',   text:'<i class="fa fa-file-csv"></i> CSV',     className:'dt-btn' },
+                    { extend:'pdfHtml5',   text:'<i class="fa fa-file-pdf"></i> PDF',     className:'dt-btn' },
+                    { extend:'print',      text:'<i class="fa fa-print"></i> Print',      className:'dt-btn' }
+                ],
+                pageLength: 8,
+                language: { search:'Filter:', paginate:{ previous:'&lsaquo;', next:'&rsaquo;' } }
+            });
+        });
+    </script>
+    <style>
+        .dt-btn {
+            background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 7px !important;
+            padding: 6px 12px !important;
+            font-size: 12px !important;
+            margin-right: 4px !important;
+        }
+
+            .dt-btn:hover {
+                opacity: 0.88 !important;
+            }
+    </style>
+}

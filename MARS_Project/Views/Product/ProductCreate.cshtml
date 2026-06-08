@@ -1,0 +1,227 @@
+﻿@model MARS_Project.Models.Product
+@{
+    ViewBag.Title = "Add Product";
+    ViewBag.Active = "products";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title { font-size:1.15rem; font-weight:700; color:#1a1a2e; margin-bottom:2px; }
+    .pg-sub   { font-size:12.5px; color:#aaa; margin-bottom:20px; }
+
+    .form-wrapper { max-width:640px; }
+
+    .f-card {
+        background:#fff; border-radius:14px;
+        border:1px solid #eee;
+        box-shadow:0 3px 14px rgba(0,0,0,0.05);
+        overflow:hidden; margin-bottom:14px;
+    }
+
+    .f-head {
+        padding:13px 20px; border-bottom:1px solid #f0f0f0;
+        background:#fafafa; display:flex; align-items:center; gap:10px;
+    }
+
+    .f-head .fhi {
+        width:30px; height:30px;
+        background:linear-gradient(135deg,#C0392B,#8B1A14);
+        border-radius:8px; display:flex; align-items:center; justify-content:center;
+        color:#fff; font-size:12px;
+    }
+
+    .f-head h6 { font-size:13.5px; font-weight:700; color:#1a1a2e; margin:0; }
+
+    .f-body { padding:20px 22px; }
+
+    /* Fields grid */
+    .fg { display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
+    .field { margin-bottom:17px; }
+    .field.full { grid-column:1/-1; }
+
+    .field label {
+        display:block; font-size:11px; font-weight:600;
+        color:#888; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:6px;
+    }
+
+    .fw { position:relative; }
+    .fw .fi { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#C0392B; font-size:13px; pointer-events:none; }
+    .fw .fi-top { position:absolute; left:12px; top:12px; color:#C0392B; font-size:13px; pointer-events:none; }
+
+    .fw input, .fw select, .fw textarea {
+        width:100%; padding:10px 13px 10px 36px;
+        border:1.5px solid #e5e7eb; border-radius:10px;
+        font-size:13.5px; color:#1a1a2e;
+        background:#fdfdfd; outline:none;
+        font-family:'DM Sans',sans-serif;
+        transition:border-color 0.2s,box-shadow 0.2s;
+    }
+
+    .fw textarea { resize:none; height:80px; padding-top:10px; }
+
+    .fw input:focus, .fw select:focus, .fw textarea:focus {
+        border-color:#C0392B;
+        box-shadow:0 0 0 3px rgba(192,57,43,0.1);
+        background:#fff;
+    }
+
+    .text-danger { font-size:11.5px; color:#C0392B; margin-top:3px; display:block; }
+
+    /* Image upload */
+    .img-upload-box {
+        border:2px dashed #e0e0e0; border-radius:12px;
+        padding:20px; text-align:center;
+        cursor:pointer; transition:border-color 0.2s,background 0.2s;
+        position:relative;
+    }
+
+    .img-upload-box:hover { border-color:#C0392B; background:#fff8f8; }
+    .img-upload-box input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .img-upload-box i { font-size:28px; color:#ddd; display:block; margin-bottom:8px; }
+    .img-upload-box span { font-size:12.5px; color:#bbb; display:block; }
+    .img-upload-box .img-name { font-size:12px; color:#C0392B; font-weight:600; margin-top:6px; display:none; }
+
+    /* Actions */
+    .action-bar {
+        background:#fff; border-radius:14px; border:1px solid #eee;
+        box-shadow:0 3px 14px rgba(0,0,0,0.05);
+        padding:16px 20px;
+        display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    }
+
+    .btn-save {
+        display:inline-flex; align-items:center; gap:7px;
+        padding:10px 26px;
+        background:linear-gradient(135deg,#C0392B,#8B1A14);
+        color:#fff; border:none; border-radius:11px;
+        font-size:14px; font-weight:700; cursor:pointer;
+        box-shadow:0 4px 14px rgba(192,57,43,0.28);
+        transition:opacity 0.2s,transform 0.15s;
+    }
+    .btn-save:hover { opacity:0.9; transform:translateY(-1px); }
+
+    .btn-back {
+        display:inline-flex; align-items:center; gap:6px;
+        padding:9px 18px;
+        background:transparent; color:#555;
+        border:1.5px solid #e0e0e0; border-radius:11px;
+        font-size:13.5px; font-weight:600; text-decoration:none;
+        transition:border-color 0.2s,color 0.2s;
+    }
+    .btn-back:hover { border-color:#C0392B; color:#C0392B; }
+
+    @@media(max-width:540px) {
+        .fg { grid-template-columns:1fr; }
+        .field.full { grid-column:auto; }
+        .f-body { padding:16px; }
+        .action-bar { flex-direction:column; }
+        .btn-save, .btn-back { width:100%; justify-content:center; }
+    }
+</style>
+
+<div class="pg-title"><i class="fa fa-plus me-2" style="color:#C0392B;"></i>Add New Product</div>
+<div class="pg-sub">Fill in the details to add a new product to the inventory</div>
+
+<div class="form-wrapper">
+    @using (Html.BeginForm("ProductCreate", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <!-- Basic Info -->
+        <div class="f-card">
+            <div class="f-head">
+                <div class="fhi"><i class="fa fa-mobile-alt"></i></div>
+                <h6>Product Information</h6>
+            </div>
+            <div class="f-body">
+                <div class="fg">
+
+                    <div class="field full">
+                        <label>Product Name</label>
+                        <div class="fw">
+                            <i class="fi fa fa-tag"></i>
+                            @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. iPhone 15 Pro" } })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="field full">
+                        <label>Description</label>
+                        <div class="fw">
+                            <i class="fi-top fa fa-align-left"></i>
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Brief product description...", style = "padding-left:36px;" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="field">
+                        <label>Price (Rs.)</label>
+                        <div class="fw">
+                            <i class="fi fa fa-tag"></i>
+                            @Html.EditorFor(m => m.Price, new { htmlAttributes = new { @class = "form-control", placeholder = "0.00" } })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="field">
+                        <label>Stock Quantity</label>
+                        <div class="fw">
+                            <i class="fi fa fa-boxes-stacked"></i>
+                            @Html.EditorFor(m => m.Stock, new { htmlAttributes = new { @class = "form-control", placeholder = "0" } })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Stock, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="field full">
+                        <label>Category</label>
+                        <div class="fw">
+                            <i class="fi fa fa-list"></i>
+                            @Html.DropDownList("ProductCategoryID", null, "-- Select Category --", new { @class = "form-control" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.ProductCategoryID, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="f-card">
+            <div class="f-head">
+                <div class="fhi"><i class="fa fa-image"></i></div>
+                <h6>Product Image</h6>
+            </div>
+            <div class="f-body">
+                <div class="img-upload-box" id="uploadBox">
+                    <input type="file" name="PRO_PIC" accept="image/*" required onchange="showFileName(this)" />
+                    <i class="fa fa-cloud-arrow-up"></i>
+                    <span>Click to upload product image</span>
+                    <span style="font-size:11px;color:#ccc;">JPG, PNG — recommended size 400×400px</span>
+                    <div class="img-name" id="imgName"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action bar -->
+        <div class="action-bar">
+            <a href="@Url.Action("ProductIndex","Product")" class="btn-back">
+                <i class="fa fa-arrow-left"></i> Back to Products
+            </a>
+            <button type="submit" class="btn-save">
+                <i class="fa fa-plus"></i> Add Product
+            </button>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>function showFileName(input) {
+            var nameEl = document.getElementById('imgName');
+            if (input.files && input.files[0]) {
+                nameEl.textContent = '✓ ' + input.files[0].name;
+                nameEl.style.display = 'block';
+                document.getElementById('uploadBox').style.borderColor = '#C0392B';
+            }
+        }</script>
+}

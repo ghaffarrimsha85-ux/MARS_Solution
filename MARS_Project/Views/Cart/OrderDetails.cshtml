@@ -1,0 +1,571 @@
+﻿@model MARS_Project.Models.Order
+@{
+    ViewBag.Title = "Order Details";
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+
+<style>
+    .page-hero {
+        background: linear-gradient(135deg, #1a0a08 0%, #C0392B 60%, #8B1A14 100%);
+        padding: 48px 0 90px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #f6f7fb;
+            clip-path: ellipse(55% 100% at 50% 100%);
+        }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #fff;
+    }
+
+        .hero-inner .page-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 6px;
+        }
+
+        .hero-inner h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+    .hero-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 18px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 20px;
+        color: #fff;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+        .hero-back-btn:hover {
+            background: rgba(255,255,255,0.28);
+            color: #fff;
+        }
+
+    .detail-wrapper {
+        max-width: 780px;
+        margin: -55px auto 0;
+        padding: 0 16px 60px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* Invoice card */
+    .invoice-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    /* Invoice header */
+    .invoice-header {
+        background: linear-gradient(135deg, #1a0a08, #C0392B);
+        padding: 28px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .invoice-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .invoice-brand-icon {
+        width: 46px;
+        height: 46px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 20px;
+    }
+
+    .invoice-brand-text h4 {
+        font-size: 17px;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+    }
+
+    .invoice-brand-text p {
+        font-size: 11.5px;
+        color: rgba(255,255,255,0.65);
+        margin: 0;
+    }
+
+    .invoice-tag {
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 10px;
+        padding: 8px 16px;
+        text-align: right;
+    }
+
+        .invoice-tag span {
+            display: block;
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .invoice-tag strong {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+    /* Meta info strip */
+    .invoice-meta {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .meta-cell {
+        padding: 16px 20px;
+        border-right: 1px solid #f0f0f0;
+    }
+
+        .meta-cell:last-child {
+            border-right: none;
+        }
+
+    .meta-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin-bottom: 4px;
+    }
+
+    .meta-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+        .meta-value.red {
+            color: #C0392B;
+        }
+
+    /* Status pill */
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+        .status-pill.pending {
+            background: #fff8e6;
+            color: #b7770d;
+            border: 1px solid #f5d87a;
+        }
+
+        .status-pill.completed {
+            background: #e8f8f0;
+            color: #1a7a47;
+            border: 1px solid #b7e4cc;
+        }
+
+        .status-pill.cancelled {
+            background: #fef3f2;
+            color: #C0392B;
+            border: 1px solid rgba(192,57,43,0.25);
+        }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    /* Items section */
+    .items-section {
+        padding: 24px 28px;
+    }
+
+    .items-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .items-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #f0f0f0;
+        }
+
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item img {
+            width: 64px;
+            height: 64px;
+            border-radius: 11px;
+            object-fit: cover;
+            border: 1.5px solid #eee;
+            flex-shrink: 0;
+        }
+
+    .order-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .order-item-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 3px;
+    }
+
+    .order-item-desc {
+        font-size: 12px;
+        color: #aaa;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .order-item-qty {
+        font-size: 12px;
+        color: #888;
+        margin-top: 3px;
+    }
+
+    .order-item-prices {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .order-item-unit {
+        font-size: 12px;
+        color: #aaa;
+        margin-bottom: 2px;
+    }
+
+    .order-item-total-price {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    /* Grand total */
+    .grand-total-section {
+        background: #fafafa;
+        border-top: 1px solid #f0f0f0;
+        padding: 16px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 20px;
+    }
+
+    .grand-label {
+        font-size: 13px;
+        color: #888;
+        font-weight: 500;
+    }
+
+    .grand-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: #C0392B;
+    }
+
+    /* Thank you */
+    .thankyou-section {
+        padding: 20px 28px;
+        text-align: center;
+        border-top: 1px solid #f0f0f0;
+    }
+
+        .thankyou-section p {
+            font-size: 13px;
+            color: #aaa;
+            margin: 0;
+        }
+
+            .thankyou-section p strong {
+                color: #1a1a2e;
+            }
+
+    /* Action footer */
+    .invoice-footer {
+        padding: 16px 28px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        background: #fafafa;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 20px;
+        background: transparent;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 10px;
+        color: #555;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: border-color 0.2s,color 0.2s;
+    }
+
+        .btn-back:hover {
+            border-color: #C0392B;
+            color: #C0392B;
+        }
+
+    .btn-print {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+        .btn-print:hover {
+            opacity: 0.9;
+        }
+
+    @@media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .invoice-card, .invoice-card * {
+            visibility: visible;
+        }
+
+        .invoice-footer, nav, footer {
+            display: none !important;
+        }
+
+        .detail-wrapper {
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice-card {
+            border-radius: 0;
+            box-shadow: none;
+        }
+    }
+
+    @@media(max-width:640px) {
+        .page-hero {
+            padding: 36px 0 80px;
+        }
+
+        .detail-wrapper {
+            margin-top: -50px;
+        }
+
+        .invoice-meta {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .meta-cell {
+            padding: 12px 14px;
+        }
+
+        .items-section {
+            padding: 16px;
+        }
+
+        .invoice-header {
+            padding: 20px;
+        }
+
+        .grand-total-section {
+            padding: 14px 16px;
+        }
+
+        .invoice-footer {
+            padding: 14px 16px;
+        }
+    }
+</style>
+
+<!-- Hero -->
+<div class="page-hero">
+    <div class="container hero-inner">
+        <div class="page-label">Orders</div>
+        <h1><i class="fa fa-file-invoice me-2"></i>Order #@Model.OrderID</h1>
+        <a href="@Url.Action("MyOrders","Cart")" class="hero-back-btn">
+            <i class="fa fa-arrow-left"></i> My Orders
+        </a>
+    </div>
+</div>
+
+<!-- Invoice -->
+<div class="detail-wrapper">
+    <div class="invoice-card">
+
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="invoice-brand">
+                <div class="invoice-brand-icon"><i class="fa fa-mobile-screen-button"></i></div>
+                <div class="invoice-brand-text">
+                    <h4>MARS Mobile Shop</h4>
+                    <p>Official Order Invoice</p>
+                </div>
+            </div>
+            <div class="invoice-tag">
+                <span>Invoice No.</span>
+                <strong>#@Model.OrderID.ToString("D5")</strong>
+            </div>
+        </div>
+
+        <!-- Meta strip -->
+        <div class="invoice-meta">
+            <div class="meta-cell">
+                <div class="meta-label">Order ID</div>
+                <div class="meta-value">#@Model.OrderID</div>
+            </div>
+            <div class="meta-cell">
+                <div class="meta-label">Date</div>
+                <div class="meta-value" style="font-size:12.5px;">
+                    @(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("MMM dd, yyyy") : "—")
+                </div>
+            </div>
+            <div class="meta-cell">
+                <div class="meta-label">Status</div>
+                <div class="meta-value">
+                    @{
+                        string sc = Model.Status == "Pending" ? "pending"
+                                  : Model.Status == "Completed" ? "completed"
+                                  : Model.Status == "Cancelled" ? "cancelled" : "";
+                    }
+                    <span class="status-pill @sc">
+                        <span class="status-dot"></span>
+                        @Model.Status
+                    </span>
+                </div>
+            </div>
+            <div class="meta-cell">
+                <div class="meta-label">Total Amount</div>
+                <div class="meta-value red">Rs. @Model.TotalAmount.ToString("N0")</div>
+            </div>
+        </div>
+
+        <!-- Items -->
+        <div class="items-section">
+            <div class="items-label">Ordered Items (@Model.OrderItems.Count)</div>
+
+            @foreach (var item in Model.OrderItems)
+            {
+                <div class="order-item">
+                    <img src="@Url.Content(string.IsNullOrEmpty(item.Product.ImageURL) ? "~/Content/Images/andoridePhon.jpg" : item.Product.ImageURL)"
+                         alt="@item.Product.Name" />
+                    <div class="order-item-info">
+                        <div class="order-item-name">@item.Product.Name</div>
+                        <div class="order-item-desc">@item.Product.Description</div>
+                        <div class="order-item-qty">Quantity: @item.Quantity</div>
+                    </div>
+                    <div class="order-item-prices">
+                        <div class="order-item-unit">Rs. @item.Price.ToString("N0") each</div>
+                        <div class="order-item-total-price">Rs. @((item.Price * item.Quantity).ToString("N0"))</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Grand Total -->
+        <div class="grand-total-section">
+            <span class="grand-label">Grand Total</span>
+            <span class="grand-value">Rs. @Model.TotalAmount.ToString("N0")</span>
+        </div>
+
+        <!-- Thank you -->
+        <div class="thankyou-section">
+            <p>Thank you for shopping at <strong>MARS Mobile Shop</strong> 🎉 &nbsp;|&nbsp; Support: <strong>support@marsmobileshop.com</strong></p>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="invoice-footer">
+            <a href="@Url.Action("MyOrders","Cart")" class="btn-back">
+                <i class="fa fa-arrow-left"></i> Back to Orders
+            </a>
+            <button class="btn-print" onclick="window.print()">
+                <i class="fa fa-print"></i> Print Invoice
+            </button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,90 @@
+﻿@model MARS_Project.Models.RepairRequest
+@{
+    ViewBag.Title = "Respond to Request";
+    Layout = "~/Views/Shared/_LayoutEmployee.cshtml";
+}
+
+<!-- 🌟 Hero Section -->
+<section class="hero-section text-center text-white d-flex align-items-center justify-content-center"
+         style="background: url('/Content/Images/bn4.jpeg') center/cover no-repeat; height: 220px;">
+    <div class="overlay"></div>
+    <div class="container position-relative">
+        <h1 class="fw-bold">@ViewBag.Title</h1>
+        <a href="@Url.Action("AssignedRequests","Employee")" class="btn btn-outline-light mt-2">
+            <i class="fa fa-arrow-left"></i> Back to Requests
+        </a>
+    </div>
+</section>
+
+<div class="container mt-5 mb-5">
+    <div class="card shadow border-0">
+        <div class="card-body">
+            <h4 class="fw-bold mb-3 text-primary">Repair Request Details</h4>
+
+            <p><strong>Customer:</strong> @ViewBag.CustomerName (@ViewBag.CustomerEmail)</p>
+            <p><strong>Contact:</strong> @ViewBag.CustomerContact</p>
+            <p><strong>Description:</strong> @Model.ProblemDescription</p>
+
+            <div class="mb-3 d-flex gap-3">
+                @if (!string.IsNullOrEmpty(Model.ProblemImage1))
+                {
+                    <img src="@Url.Content(Model.ProblemImage1)" class="img-thumbnail" style="width:120px;height:120px;" />
+                }
+                @if (!string.IsNullOrEmpty(Model.ProblemImage2))
+                {
+                    <img src="@Url.Content(Model.ProblemImage2)" class="img-thumbnail" style="width:120px;height:120px;" />
+                }
+                @if (!string.IsNullOrEmpty(Model.ProblemImage3))
+                {
+                    <img src="@Url.Content(Model.ProblemImage3)" class="img-thumbnail" style="width:120px;height:120px;" />
+                }
+            </div>
+
+            <hr />
+
+            <h5 class="fw-bold text-secondary mb-3">Provide Your Response</h5>
+
+            @using (Html.BeginForm("RespondToRequest", "Employee", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.RequestID)
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Solution Description</label>
+                    <textarea name="SolutionDesc" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Estimated Cost (Rs.)</label>
+                        <input type="number" name="EstimatedCost" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Estimated Time</label>
+                        <input type="text" name="EstimatedTime" class="form-control" placeholder="e.g. 2 days" required />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="fa fa-paper-plane"></i> Submit Response
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '@TempData["Message"]',
+                confirmButtonColor: '#3085d6'
+            });
+        </script>
+    }
+}

@@ -1,0 +1,306 @@
+﻿@model MARS_Project.Models.User
+@{
+    ViewBag.Title = "Edit User";
+    ViewBag.Active = "users";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 2px;
+    }
+
+    .pg-sub {
+        font-size: 12.5px;
+        color: #aaa;
+        margin-bottom: 20px;
+    }
+
+    .form-wrapper {
+        max-width: 520px;
+    }
+
+    .f-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #eee;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        overflow: hidden;
+        margin-bottom: 14px;
+    }
+
+    .f-head {
+        padding: 13px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .f-head .fhi {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg,#C0392B,#8B1A14);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .f-head h6 {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+    .f-body {
+        padding: 20px 22px;
+    }
+
+    /* User info card at top */
+    .user-info-bar {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #eee;
+    }
+
+    .user-avatar-lg {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#C0392B,#E8C97A);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .user-info-bar .u-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .user-info-bar .u-id {
+        font-size: 11.5px;
+        color: #aaa;
+    }
+
+    /* Fields */
+    .field {
+        margin-bottom: 18px;
+    }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 6px;
+        }
+
+    .fw {
+        position: relative;
+    }
+
+        .fw .fi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #C0392B;
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .fw input, .fw select {
+            width: 100%;
+            padding: 10px 13px 10px 37px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 13.5px;
+            color: #1a1a2e;
+            background: #fdfdfd;
+            outline: none;
+            font-family: 'DM Sans',sans-serif;
+            transition: border-color 0.2s,box-shadow 0.2s;
+            appearance: none;
+        }
+
+            .fw input:focus, .fw select:focus {
+                border-color: #C0392B;
+                box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+                background: #fff;
+            }
+
+    /* Status select colored */
+    .status-approved {
+        color: #1a7a47;
+    }
+
+    .status-pending {
+        color: #b7770d;
+    }
+
+    .status-rejected {
+        color: #C0392B;
+    }
+
+    /* Action bar */
+    .action-bar {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #eee;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .btn-save {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 24px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        color: #fff;
+        border: none;
+        border-radius: 11px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(192,57,43,0.28);
+        transition: opacity 0.2s,transform 0.15s;
+    }
+
+        .btn-save:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 18px;
+        background: transparent;
+        color: #555;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 11px;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: border-color 0.2s,color 0.2s;
+    }
+
+        .btn-back:hover {
+            border-color: #C0392B;
+            color: #C0392B;
+        }
+</style>
+
+<div class="pg-title"><i class="fa fa-user-pen me-2" style="color:#C0392B;"></i>Edit User</div>
+<div class="pg-sub">Update user information and access settings</div>
+
+<div class="form-wrapper">
+    @using (Html.BeginForm("EditUser", "Admin", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.UserID)
+
+        <!-- User info bar -->
+        <div class="user-info-bar">
+            <div class="user-avatar-lg">
+                @(Model.Name != null && Model.Name.Length > 0 ? Model.Name[0].ToString().ToUpper() : "U")
+            </div>
+            <div>
+                <div class="u-name">@Model.Name</div>
+                <div class="u-id">User ID: #@Model.UserID &nbsp;·&nbsp; @Model.Email</div>
+            </div>
+        </div>
+
+        <!-- Form card -->
+        <div class="f-card">
+            <div class="f-head">
+                <div class="fhi"><i class="fa fa-user"></i></div>
+                <h6>User Information</h6>
+            </div>
+            <div class="f-body">
+
+                <div class="field">
+                    <label>Full Name</label>
+                    <div class="fw">
+                        <i class="fi fa fa-user"></i>
+                        @Html.TextBoxFor(m => m.Name, new { placeholder = "Full name", autocomplete = "off" })
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Email Address</label>
+                    <div class="fw">
+                        <i class="fi fa fa-envelope"></i>
+                        @Html.TextBoxFor(m => m.Email, new { placeholder = "Email address", autocomplete = "off" })
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Role</label>
+                    <div class="fw">
+                        <i class="fi fa fa-id-badge"></i>
+                        @Html.DropDownList("UsertypeID", (SelectList)ViewBag.UsertypeID, "-- Select Role --")
+                    </div>
+                </div>
+
+                <div class="field" style="margin-bottom:0;">
+                    <label>Account Status</label>
+                    <div class="fw">
+                        <i class="fi fa fa-circle-check"></i>
+                        @Html.DropDownListFor(m => m.Status,
+                                 new SelectList(new[] { "Pending", "Approved", "Rejected" }, Model.Status),
+                                 "-- Select Status --")
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-bar">
+            <a href="@Url.Action("ManageUsers","Admin")" class="btn-back">
+                <i class="fa fa-arrow-left"></i> Back to Users
+            </a>
+            <button type="submit" class="btn-save">
+                <i class="fa fa-save"></i> Save Changes
+            </button>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            Swal.fire({ icon:'success', title:'Updated!', text:'@TempData["SuccessMessage"]', confirmButtonColor:'#C0392B', timer:2500 });
+        </script>
+    }
+}

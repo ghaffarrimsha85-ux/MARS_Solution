@@ -1,0 +1,508 @@
+﻿@model IEnumerable<MARS_Project.Models.Product>
+@{
+    ViewBag.Title = "Browse Products";
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+
+<style>
+    /* ===== BANNER / CAROUSEL ===== */
+    .slider_section {
+        margin: 0;
+        padding: 0;
+    }
+
+    #myCarousel {
+        width: 100%;
+    }
+
+        #myCarousel .carousel-item {
+            position: relative;
+        }
+
+            #myCarousel .carousel-item img {
+                width: 100%;
+                height: 420px; /* fixed height — screen pe fit */
+                object-fit: cover;
+                object-position: center;
+                display: block;
+            }
+
+            /* dark overlay on image */
+            #myCarousel .carousel-item::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(90deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 100%);
+                pointer-events: none;
+            }
+
+        /* caption positioning */
+        #myCarousel .carousel-caption {
+            position: absolute;
+            top: 50%;
+            left: 6%;
+            right: auto;
+            transform: translateY(-50%);
+            text-align: left;
+            z-index: 5;
+            max-width: 520px;
+            bottom: auto;
+            padding: 0;
+        }
+
+            #myCarousel .carousel-caption span {
+                display: inline-block;
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: #ffcb47;
+                margin-bottom: 10px;
+            }
+
+            #myCarousel .carousel-caption h1 {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #fff;
+                line-height: 1.25;
+                margin-bottom: 12px;
+            }
+
+            #myCarousel .carousel-caption p {
+                font-size: 14px;
+                color: rgba(255,255,255,0.82);
+                margin-bottom: 20px;
+                line-height: 1.6;
+            }
+
+    .buynow {
+        display: inline-block;
+        padding: 10px 26px;
+        background: #C0392B;
+        color: #fff;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        transition: background 0.2s;
+    }
+
+        .buynow:hover {
+            background: #962d22;
+            color: #fff;
+        }
+
+    .social_icon {
+        list-style: none;
+        display: flex;
+        gap: 10px;
+        padding: 0;
+        margin-top: 18px;
+    }
+
+        .social_icon li a {
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 13px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+            .social_icon li a:hover {
+                background: rgba(255,255,255,0.2);
+            }
+
+    /* carousel arrows */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 42px;
+        height: 42px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        position: absolute;
+        z-index: 10;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 20px;
+        transition: background 0.2s;
+    }
+
+    .carousel-control-prev {
+        left: 16px;
+    }
+
+    .carousel-control-next {
+        right: 16px;
+    }
+
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            background: rgba(255,255,255,0.28);
+        }
+
+    /* ===== SEARCH BAR ===== */
+    .search-section {
+        background: #fff;
+        padding: 18px 0;
+        border-bottom: 1px solid #eee;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+        .search-section .form-control {
+            border-radius: 8px;
+            border: 1.5px solid #e0e0e0;
+            font-size: 14px;
+            height: 42px;
+        }
+
+            .search-section .form-control:focus {
+                border-color: #C0392B;
+                box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+            }
+
+        .search-section .btn-search {
+            background: #C0392B;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            height: 42px;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+            .search-section .btn-search:hover {
+                background: #962d22;
+            }
+
+    /* ===== PRODUCTS SECTION ===== */
+    .products-section {
+        padding: 28px 0 40px;
+        background: #f6f7fb;
+    }
+
+    .section-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        padding-left: 12px;
+        border-left: 4px solid #C0392B;
+    }
+
+    /* ===== PRODUCT CARD ===== */
+    .card-product {
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #eee;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        height: 100%;
+    }
+
+        .card-product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.09);
+        }
+
+    .img-hover {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .img-hover img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+    .card-product:hover .img-hover img {
+        transform: scale(1.05);
+    }
+
+    /* Add to Cart overlay */
+    .mask-icon {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 12px;
+        background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.52) 100%);
+        opacity: 0;
+        transition: opacity 0.22s;
+    }
+
+    .img-hover:hover .mask-icon {
+        opacity: 1;
+    }
+
+    .mask-icon a.btn-cart {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 16px;
+        background: #C0392B;
+        color: #fff;
+        border-radius: 20px;
+        font-size: 12.5px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        transition: background 0.2s;
+    }
+
+        .mask-icon a.btn-cart:hover {
+            background: #962d22;
+        }
+
+    .mask-icon a.btn-login-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 16px;
+        background: rgba(255,255,255,0.18);
+        color: #fff;
+        border-radius: 20px;
+        font-size: 12.5px;
+        text-decoration: none;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    /* card body */
+    .card-product .card-body {
+        padding: 12px 12px 14px;
+        position: relative;
+    }
+
+    .badge-stock {
+        display: inline-block;
+        background: rgba(0,0,0,0.06);
+        color: #555;
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .card-product .card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-product .card-desc {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-product .card-price {
+        font-size: 15px;
+        font-weight: 700;
+        color: #C0392B;
+    }
+
+    /* no products */
+    .no-products {
+        text-align: center;
+        padding: 48px 20px;
+        color: #aaa;
+    }
+
+        .no-products i {
+            font-size: 40px;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+    @@media (max-width: 576px) {
+        #myCarousel .carousel-item img {
+            height: 260px;
+        }
+
+        #myCarousel .carousel-caption h1 {
+            font-size: 1.35rem;
+        }
+
+        #myCarousel .carousel-caption p {
+            display: none;
+        }
+
+        .img-hover img {
+            height: 150px;
+        }
+    }
+</style>
+
+<!-- ===== BANNER ===== -->
+<section class="slider_section">
+    <div id="myCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-inner">
+
+            <div class="carousel-item active">
+                <img src="~/Content/Extera/images/banner.jpg" alt="Latest Smartphones">
+                <div class="carousel-caption">
+                    <span>Latest Smartphones</span>
+                    <h1>Special Discounts<br>on New Models</h1>
+                    <p>Explore our wide range of brand new mobiles<br>at the best prices.</p>
+                    <a class="buynow" href="@Url.Action("Index","CustomerProduct")">Browse Products</a>
+                    <ul class="social_icon">
+                        <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <img src="~/Content/Extera/images/banner.jpg" alt="Repair Services">
+                <div class="carousel-caption">
+                    <span>Repair Services</span>
+                    <h1>Quick &amp; Reliable<br>Mobile Repairs</h1>
+                    <p>Submit your mobile problem with details.<br>Our expert technicians will fix it on time.</p>
+                    <a class="buynow" href="@Url.Action("SubmitRepair","CustomerRepair")">Request Repair</a>
+                    <ul class="social_icon">
+                        <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <img src="~/Content/Extera/images/banner.jpg" alt="Accessories">
+                <div class="carousel-caption">
+                    <span>Accessories &amp; Gadgets</span>
+                    <h1>Best Deals on<br>Mobile Accessories</h1>
+                    <p>Buy chargers, covers, earphones and more<br>with affordable prices and fast delivery.</p>
+                    <a class="buynow" href="@Url.Action("Index","CustomerProduct")">Shop Accessories</a>
+                    <ul class="social_icon">
+                        <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+            <i class="fa fa-angle-left"></i>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+            <i class="fa fa-angle-right"></i>
+        </button>
+    </div>
+</section>
+
+<!-- ===== SEARCH BAR ===== -->
+<div class="search-section">
+    <div class="container">
+        <form method="get" action="@Url.Action("Index")" class="row g-2 align-items-center">
+            <div class="col-12 col-md-5">
+                <input type="text" name="search" value="@Request["search"]"
+                       class="form-control" placeholder="Search products..." />
+            </div>
+            <div class="col-8 col-md-4">
+                @Html.DropDownList("categoryId", (SelectList)ViewBag.Categories, "All Categories",
+                         new { @class = "form-control", id = "categoryId", style = "height:42px;border-radius:8px;border:1.5px solid #e0e0e0;font-size:14px;" })
+            </div>
+            <div class="col-4 col-md-3">
+                <button type="submit" class="btn-search">
+                    <i class="fa fa-search me-1"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== PRODUCTS ===== -->
+<div class="products-section">
+    <div class="container">
+        <div class="section-title">Our Products</div>
+
+        @if (!Model?.Any() ?? true)
+        {
+            <div class="no-products">
+                <i class="fa fa-box-open"></i>
+                No products found. Try a different search.
+            </div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var item in Model)
+                {
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                        <div class="card-product">
+                            <div class="img-hover">
+                                <img src="@Url.Content(string.IsNullOrEmpty(item.ImageURL) ? "~/Content/Images/andoridePhon.jpg" : item.ImageURL)"
+                                     alt="@item.Name" />
+                                <div class="mask-icon">
+                                    @if (Session["UserType"] != null && Session["UserType"].ToString() == "Customer")
+                                    {
+                                        <a href="@Url.Action("AddToCart","Cart", new { id = item.ProductID })" class="btn-cart">
+                                            <i class="fa fa-cart-plus"></i> Add to Cart
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Login","Home")" class="btn-login-hint">
+                                            <i class="fa fa-sign-in-alt"></i> Login to Buy
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <span class="badge-stock">Stock: @item.Stock</span>
+                                <div class="card-title" title="@item.Name">@item.Name</div>
+                                <div class="card-desc" title="@item.Description">@item.Description</div>
+                                <div class="card-price">Rs. @item.Price</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+@section Scripts {
+    <script>
+        (function () {
+            var cat = document.getElementById('categoryId');
+            if (cat) {
+                cat.addEventListener('change', function () { this.form.submit(); });
+            }
+        })();
+    </script>
+}

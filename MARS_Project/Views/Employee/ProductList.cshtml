@@ -1,0 +1,43 @@
+﻿@model IEnumerable<MARS_Project.Models.Product>
+@{
+    ViewBag.Title = "Product List";
+    Layout = "~/Views/Shared/_LayoutEmployee.cshtml";
+}
+
+<h3 class="mb-4 text-center">Product List</h3>
+
+<table id="productsTable" class="display nowrap" style="width:100%">
+
+    <thead class="table-primary">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price (Rs.)</th>
+            <th>Stock</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductID</td>
+                <td>@item.Name</td>
+                <td>@item.Price.ToString("N0")</td>
+                <td>@item.Stock</td>
+                <td>@(item.ProductCategory != null ? item.ProductCategory.ProductCategoryName : "—")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#productsTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+                responsive: true
+            });
+        });
+    </script>
+}

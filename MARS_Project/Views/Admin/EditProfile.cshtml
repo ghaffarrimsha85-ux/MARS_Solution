@@ -1,0 +1,169 @@
+﻿@model MARS_Project.Models.User
+@{
+    ViewBag.Title = "Edit Profile";
+    ViewBag.Active = "profile";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title { font-size:1.15rem; font-weight:700; color:#1a1a2e; margin-bottom:2px; }
+    .pg-sub   { font-size:12.5px; color:#aaa; margin-bottom:20px; }
+    .form-wrapper { max-width:560px; }
+
+    .f-card { background:#fff; border-radius:14px; border:1px solid #eee; box-shadow:0 3px 14px rgba(0,0,0,0.05); overflow:hidden; margin-bottom:14px; }
+    .f-head { padding:13px 20px; border-bottom:1px solid #f0f0f0; background:#fafafa; display:flex; align-items:center; gap:10px; }
+    .f-head .fhi { width:30px; height:30px; background:linear-gradient(135deg,#C0392B,#8B1A14); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; }
+    .f-head h6 { font-size:13.5px; font-weight:700; color:#1a1a2e; margin:0; }
+    .f-body { padding:20px 22px; }
+
+    /* Avatar upload */
+    .avatar-upload-card {
+        background:#fff; border-radius:14px; border:1px solid #eee;
+        box-shadow:0 3px 14px rgba(0,0,0,0.05);
+        padding:24px; text-align:center; margin-bottom:14px;
+    }
+    .avatar-ring {
+        width:90px; height:90px; border-radius:50%;
+        padding:3px; background:linear-gradient(135deg,#C0392B,#E8C97A);
+        display:inline-block; margin-bottom:14px;
+    }
+    .avatar-ring img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid #fff; display:block; }
+    .photo-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; background:transparent; border:2px solid #C0392B; border-radius:20px; color:#C0392B; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s,color 0.2s; }
+    .photo-btn:hover { background:#C0392B; color:#fff; }
+    .photo-hint { font-size:11.5px; color:#bbb; margin-top:7px; }
+
+    /* Fields */
+    .fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
+    .field { margin-bottom:17px; }
+    .field.full { grid-column:1/-1; }
+    .field label { display:block; font-size:11px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:6px; }
+    .fw { position:relative; }
+    .fw .fi { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#C0392B; font-size:13px; pointer-events:none; }
+    .fw .fi-top { position:absolute; left:12px; top:12px; color:#C0392B; font-size:13px; pointer-events:none; }
+    .fw input, .fw textarea {
+        width:100%; padding:10px 13px 10px 37px;
+        border:1.5px solid #e5e7eb; border-radius:10px;
+        font-size:13.5px; color:#1a1a2e;
+        background:#fdfdfd; outline:none;
+        font-family:'DM Sans',sans-serif;
+        transition:border-color 0.2s,box-shadow 0.2s;
+    }
+    .fw textarea { resize:none; height:80px; padding-top:10px; }
+    .fw input:focus, .fw textarea:focus { border-color:#C0392B; box-shadow:0 0 0 3px rgba(192,57,43,0.1); background:#fff; }
+    .fw input[readonly] { background:#f5f5f5; color:#aaa; cursor:not-allowed; }
+    .readonly-hint { font-size:10.5px; color:#bbb; margin-top:3px; display:flex; align-items:center; gap:4px; }
+
+    /* Actions */
+    .action-bar { background:#fff; border-radius:14px; border:1px solid #eee; box-shadow:0 3px 14px rgba(0,0,0,0.05); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .btn-save { display:inline-flex; align-items:center; gap:7px; padding:10px 24px; background:linear-gradient(135deg,#C0392B,#8B1A14); color:#fff; border:none; border-radius:11px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(192,57,43,0.28); transition:opacity 0.2s,transform 0.15s; }
+    .btn-save:hover { opacity:0.9; transform:translateY(-1px); }
+    .btn-back { display:inline-flex; align-items:center; gap:6px; padding:9px 18px; background:transparent; color:#555; border:1.5px solid #e0e0e0; border-radius:11px; font-size:13.5px; font-weight:600; text-decoration:none; transition:border-color 0.2s,color 0.2s; }
+    .btn-back:hover { border-color:#C0392B; color:#C0392B; }
+
+    @@media(max-width:540px) {
+        .fields-grid { grid-template-columns:1fr; }
+        .field.full { grid-column:auto; }
+        .f-body { padding:16px; }
+        .action-bar { flex-direction:column; }
+        .btn-save, .btn-back { width:100%; justify-content:center; }
+    }
+</style>
+
+<div class="pg-title"><i class="fa fa-user-pen me-2" style="color:#C0392B;"></i>Edit Profile</div>
+<div class="pg-sub">Update your admin account information</div>
+
+<div class="form-wrapper">
+    @using (Html.BeginForm("EditProfile", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.UserID)
+
+        <!-- Avatar Upload -->
+        <div class="avatar-upload-card">
+            <div class="avatar-ring">
+                <img id="imgPreview"
+                     src="@(!string.IsNullOrEmpty(Model.ProfileImage) ? Url.Content(Model.ProfileImage) : Url.Content("~/Content/Images/avt.png"))"
+                     alt="Profile" />
+            </div>
+            <div>
+                <label class="photo-btn">
+                    <i class="fa fa-camera"></i> Change Photo
+                    <input type="file" name="ProfileImageFile" accept="image/*"
+                           onchange="previewImage(this)" hidden />
+                </label>
+            </div>
+            <div class="photo-hint">JPG, PNG — max 2MB recommended</div>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="f-card">
+            <div class="f-head">
+                <div class="fhi"><i class="fa fa-user-shield"></i></div>
+                <h6>Personal Information</h6>
+            </div>
+            <div class="f-body">
+                <div class="fields-grid">
+
+                    <div class="field full">
+                        <label>Full Name</label>
+                        <div class="fw">
+                            <i class="fi fa fa-user"></i>
+                            @Html.TextBoxFor(m => m.Name, new { placeholder = "Your full name" })
+                        </div>
+                    </div>
+
+                    <div class="field full">
+                        <label>Email Address</label>
+                        <div class="fw">
+                            <i class="fi fa fa-envelope"></i>
+                            @Html.TextBoxFor(m => m.Email, new { @readonly = "readonly" })
+                        </div>
+                        <div class="readonly-hint">
+                            <i class="fa fa-lock" style="font-size:10px;color:#C0392B;"></i>
+                            Email cannot be changed
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Contact Number</label>
+                        <div class="fw">
+                            <i class="fi fa fa-phone"></i>
+                            @Html.TextBoxFor(m => m.ContactNumber, new { placeholder = "03xx-xxxxxxx" })
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Address</label>
+                        <div class="fw">
+                            <i class="fi-top fa fa-map-marker-alt"></i>
+                            @Html.TextAreaFor(m => m.Address, new { placeholder = "Your address", style = "padding-left:37px;" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-bar">
+            <a href="@Url.Action("Profile","Admin")" class="btn-back">
+                <i class="fa fa-arrow-left"></i> Back to Profile
+            </a>
+            <button type="submit" class="btn-save">
+                <i class="fa fa-save"></i> Save Changes
+            </button>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imgPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }</script>
+}
