@@ -6,25 +6,17 @@
 }
 
 <style>
-    .page-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-bottom: 22px;
-    }
-
-    .page-title {
-        font-size: 1.2rem;
+    .pg-title {
+        font-size: 1.15rem;
         font-weight: 700;
         color: #1a1a2e;
-        margin-bottom: 3px;
+        margin-bottom: 2px;
     }
 
-    .page-sub {
+    .pg-sub {
         font-size: 12.5px;
         color: #aaa;
+        margin-bottom: 18px;
     }
 
     /* Summary pills */
@@ -90,7 +82,7 @@
         font-weight: 500;
     }
 
-    /* Empty */
+    /* Empty state */
     .empty-card {
         background: #fff;
         border-radius: 16px;
@@ -338,7 +330,7 @@
         font-size: 13px;
         font-weight: 600;
         text-decoration: none;
-        transition: opacity 0.2s,transform 0.15s;
+        transition: opacity 0.2s, transform 0.15s;
         border: none;
         box-shadow: 0 3px 12px rgba(192,57,43,0.28);
         white-space: nowrap;
@@ -351,12 +343,8 @@
         }
 </style>
 
-<div class="page-header">
-    <div>
-        <div class="page-title"><i class="fa fa-wrench me-2" style="color:#C0392B;"></i>Assigned Repair Requests</div>
-        <div class="page-sub">Review and respond to requests assigned to you</div>
-    </div>
-</div>
+<div class="pg-title"><i class="fa fa-wrench me-2" style="color:#C0392B;"></i>Assigned Repair Requests</div>
+<div class="pg-sub">Review and respond to requests assigned to you</div>
 
 @{
     int total = Model.Count();
@@ -366,10 +354,10 @@
 }
 
 <div class="summary-pills">
-    <div class="s-pill all"> <div class="pill-icon"><i class="fa fa-list"></i></div> <div><div class="pill-val">@total</div><div class="pill-label">Total</div></div> </div>
-    <div class="s-pill pend"><div class="pill-icon"><i class="fa fa-clock"></i></div> <div><div class="pill-val">@pending</div><div class="pill-label">Pending</div></div> </div>
-    <div class="s-pill prog"><div class="pill-icon"><i class="fa fa-spinner"></i></div><div><div class="pill-val">@inprog</div><div class="pill-label">In Progress</div></div></div>
-    <div class="s-pill done"><div class="pill-icon"><i class="fa fa-check"></i></div>  <div><div class="pill-val">@done</div><div class="pill-label">Completed</div></div></div>
+    <div class="s-pill all"> <div class="pill-icon"><i class="fa fa-list"></i></div>    <div><div class="pill-val">@total</div>  <div class="pill-label">Total</div></div></div>
+    <div class="s-pill pend"><div class="pill-icon"><i class="fa fa-clock"></i></div>   <div><div class="pill-val">@pending</div><div class="pill-label">Pending</div></div></div>
+    <div class="s-pill prog"><div class="pill-icon"><i class="fa fa-spinner"></i></div> <div><div class="pill-val">@inprog</div> <div class="pill-label">In Progress</div></div></div>
+    <div class="s-pill done"><div class="pill-icon"><i class="fa fa-check"></i></div>   <div><div class="pill-val">@done</div>   <div class="pill-label">Completed</div></div></div>
 </div>
 
 @if (!Model.Any())
@@ -384,35 +372,69 @@ else
 {
     foreach (var req in Model)
     {
-        string sc = req.Status == "Pending" ? "pending" : req.Status == "In Progress" ? "inprogress" : req.Status == "Completed" ? "completed" : "pending";
+        string sc = req.Status == "Pending" ? "pending"
+                  : req.Status == "Assigned" ? "pending"
+                  : req.Status == "In Progress" ? "inprogress"
+                  : req.Status == "Responded" ? "inprogress"
+                  : req.Status == "Completed" ? "completed" : "pending";
+
+        // ✅ FIX: Use ViewBag dictionary passed from controller (keyed by RequestID)
+        // because navigation property req.User may not be loaded via lazy loading.
+        // Controller must pass: ViewBag.CustomerNames = dict<int,string>
+        string customerName = "Unknown Customer";
+        if (ViewBag.CustomerNames != null)
+        {
+            var dict = ViewBag.CustomerNames as System.Collections.Generic.Dictionary<int, string>;
+            if (dict != null && dict.ContainsKey(req.RequestID))
+            {
+                customerName = dict[req.RequestID];
+            }
+        }
+        // Fallback: if navigation property IS loaded, use it directly
+        if (customerName == "Unknown Customer" && req.User != null && !string.IsNullOrEmpty(req.User.Name))
+        {
+            customerName = req.User.Name;
+        }
+
         <div class="req-card">
             <div class="req-card-top @sc"></div>
             <div class="req-card-body">
-                <div class="req-id-badge"><span>REQ</span><span>#@req.RequestID</span></div>
+                <div class="req-id-badge">
+                    <span>REQ</span>
+                    <span>#@req.RequestID</span>
+                </div>
+
                 <div class="req-content">
-                    <div class="req-customer"><i class="fa fa-user"></i>@(req.User?.Name ?? "Unknown Customer")</div>
+                    <div class="req-customer">
+                        <i class="fa fa-user"></i>
+                        @customerName
+                    </div>
                     <div class="req-desc">@req.ProblemDescription</div>
                     <div class="req-meta">
-                        <div class="meta-chip"><i class="fa fa-calendar"></i> @req.RequestDate?.ToString("MMM dd, yyyy")</div>
-                        <div class="meta-chip"><i class="fa fa-clock"></i> @req.RequestDate?.ToString("hh:mm tt")</div>
+                        <div class="meta-chip"><i class="fa fa-calendar"></i> @(req.RequestDate.HasValue ? req.RequestDate.Value.ToString("MMM dd, yyyy") : "—")</div>
+                        <div class="meta-chip"><i class="fa fa-clock"></i> @(req.RequestDate.HasValue ? req.RequestDate.Value.ToString("hh:mm tt") : "—")</div>
                         <span class="status-pill @sc"><span class="status-dot"></span> @req.Status</span>
                     </div>
                 </div>
+
                 <div class="req-right">
                     <div class="img-thumbs">
                         @if (!string.IsNullOrEmpty(req.ProblemImage1))
                         {<a href="@req.ProblemImage1" target="_blank" class="img-thumb"><img src="@req.ProblemImage1" alt="img" /></a> }
                         else
                         { <div class="img-thumb-empty"><i class="fa fa-image"></i></div>}
+
                         @if (!string.IsNullOrEmpty(req.ProblemImage2))
                         {<a href="@req.ProblemImage2" target="_blank" class="img-thumb"><img src="@req.ProblemImage2" alt="img" /></a> }
                         else
                         { <div class="img-thumb-empty"><i class="fa fa-image"></i></div>}
+
                         @if (!string.IsNullOrEmpty(req.ProblemImage3))
                         {<a href="@req.ProblemImage3" target="_blank" class="img-thumb"><img src="@req.ProblemImage3" alt="img" /></a> }
                         else
                         { <div class="img-thumb-empty"><i class="fa fa-image"></i></div>}
                     </div>
+
                     <a href="@Url.Action("RespondToRequest","Employee", new { id = req.RequestID })" class="btn-respond">
                         <i class="fa fa-reply"></i> Respond
                     </a>

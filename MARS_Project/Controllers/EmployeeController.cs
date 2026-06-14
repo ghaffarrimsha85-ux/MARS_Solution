@@ -73,8 +73,9 @@ namespace MARS_Project.Controllers
 
             int employeeId = Convert.ToInt32(Session["UserID"]);
 
-            // Fetch assigned repair requests
+            // Fetch assigned repair requests — Include("User") loads customer name
             var assignedRequests = db.RepairRequests
+                .Include("User")
                 .Where(r => r.AssignedEmployeeID == employeeId)
                 .OrderByDescending(r => r.RequestDate)
                 .ToList();
@@ -86,16 +87,18 @@ namespace MARS_Project.Controllers
         [HttpGet]
         public ActionResult RespondToRequest(int id)
         {
-            var request = db.RepairRequests.Find(id);
+            var request = db.RepairRequests
+                            .Include("User")
+                            .FirstOrDefault(r => r.RequestID == id);
             if (request == null)
             {
                 return HttpNotFound();
             }
 
             // Load customer info with the request
-            ViewBag.CustomerName = request.User?.Name;
-            ViewBag.CustomerEmail = request.User?.Email;
-            ViewBag.CustomerContact = request.User?.ContactNumber;
+            ViewBag.CustomerName = request.User != null ? request.User.Name : "—";
+            ViewBag.CustomerEmail = request.User != null ? request.User.Email : "—";
+            ViewBag.CustomerContact = request.User != null ? request.User.ContactNumber : "—";
 
             return View(request);
         }
@@ -144,6 +147,7 @@ namespace MARS_Project.Controllers
             int empId = Convert.ToInt32(Session["UserID"]);
 
             var responses = db.RepairResponses
+                              .Include("RepairRequest")
                               .Where(r => r.EmployeeID == empId)
                               .OrderByDescending(r => r.ResponseDate)
                               .ToList();
@@ -200,6 +204,8 @@ namespace MARS_Project.Controllers
             int empId = Convert.ToInt32(Session["UserID"]);
 
             var assigned = db.RepairRequests
+                             .Include("User")
+                             .Include("User1")
                              .Where(r => r.AssignedEmployeeID == empId)
                              .ToList();
 

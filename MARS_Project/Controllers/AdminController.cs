@@ -242,37 +242,8 @@ namespace MARS_Project.Controllers
 
 
 
-        //************************************************************************
-        // list repair requests
-        public ActionResult RepairRequests()
-        {
-            var reqs = db.RepairRequests.Include(r => r.User).ToList();
-            return View(reqs);
-        }
 
-        // Assign GET
-        public ActionResult AssignRepair(int id)
-        {
-            var req = db.RepairRequests.Find(id);
-            if (req == null) return HttpNotFound();
-            // get employees
-            var employees = db.Users.Where(u => u.UsertypeID == 2 && u.Status == "Approved").ToList();
-            ViewBag.Employees = new SelectList(employees, "UserID", "Name", req.AssignedEmployeeID);
-            return View(req);
-        }
-
-        // Assign POST
-        [HttpPost]
-        public ActionResult AssignRepair(int RequestID, int AssignedEmployeeID)
-        {
-            var req = db.RepairRequests.Find(RequestID);
-            if (req == null) return HttpNotFound();
-            req.AssignedEmployeeID = AssignedEmployeeID;
-            req.Status = "Assigned";
-            db.SaveChanges();
-            TempData["SuccessMessage"] = "Repair assigned.";
-            return RedirectToAction("RepairRequests");
-        }
+        
 
 
         //************************************************************************
@@ -526,7 +497,84 @@ namespace MARS_Project.Controllers
 
             return PartialView("_OrderDetailsPartial", cleanOrder);
         }
+        // ═══════════════════════════════════════════════════════════
+        // AdminController mein yeh actions add/update karo
+        // RepairRequests, AssignRepair already hain — replace karo
+        // DeleteRepair naya add karo
+        // ═══════════════════════════════════════════════════════════
 
+        // ── LIST ALL REPAIR REQUESTS
+        public ActionResult RepairRequests()
+        {
+            var reqs = db.RepairRequests
+                         .Include(r => r.User)       // Customer
+                         .Include(r => r.User1)      // Assigned Employee
+                         .OrderByDescending(r => r.RequestDate)
+                         .ToList();
+            return View(reqs);
+        }
+
+        // ── ASSIGN REPAIR (GET)
+        public ActionResult AssignRepair(int id)
+        {
+            var req = db.RepairRequests
+                        .Include(r => r.User)
+                        .Include(r => r.User1)
+                        .FirstOrDefault(r => r.RequestID == id);
+
+            if (req == null) return HttpNotFound();
+
+            // Get active employees only — UsertypeID == 6 (your Employee type)
+            var employees = db.Users
+                              .Where(u => u.UsertypeID == 6 && u.Status == "Active")
+                              .ToList();
+
+            ViewBag.Employees = new SelectList(employees, "UserID", "Name", req.AssignedEmployeeID);
+            return View(req);
+        }
+
+        // ── ASSIGN REPAIR (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AssignRepair(int RequestID, int AssignedEmployeeID)
+        {
+            var req = db.RepairRequests.Find(RequestID);
+            if (req == null) return HttpNotFound();
+
+            req.AssignedEmployeeID = AssignedEmployeeID;
+            req.Status = "Assigned";
+            db.SaveChanges();
+
+            TempData["SuccessMessage"] = "Repair request assigned successfully!";
+            return RedirectToAction("RepairRequests");
+        }
+
+        // ── DELETE REPAIR REQUEST
+        public ActionResult DeleteRepair(int id)
+        {
+            try
+            {
+                var req = db.RepairRequests.Find(id);
+                if (req != null)
+                {
+                    // Delete linked responses first
+                    var responses = db.RepairResponses
+                                      .Where(r => r.RequestID == id).ToList();
+                    if (responses.Any())
+                        db.RepairResponses.RemoveRange(responses);
+
+                    db.RepairRequests.Remove(req);
+                    db.SaveChanges();
+                    TempData["SuccessMessage"] = "Repair request deleted successfully!";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["SuccessMessage"] = "Could not delete: " + ex.Message;
+            }
+
+            return RedirectToAction("RepairRequests");
+        }
 
     }
 }

@@ -8,7 +8,7 @@
 <table id="requestsTable" class="display nowrap" style="width:100%">
     <thead>
         <tr>
-            <th>ID</th>
+           
             <th>Customer</th>
             <th>Description</th>
             <th>Status</th>
@@ -19,7 +19,7 @@
         @foreach (var req in Model)
         {
             <tr>
-                <td>@req.RequestID</td>
+              
                 <td>@req.User.Name</td>
                 <td>@req.ProblemDescription</td>
                 <td>@req.Status</td>

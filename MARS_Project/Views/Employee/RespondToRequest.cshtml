@@ -4,86 +4,378 @@
     Layout = "~/Views/Shared/_LayoutEmployee.cshtml";
 }
 
-<!-- 🌟 Hero Section -->
-<section class="hero-section text-center text-white d-flex align-items-center justify-content-center"
-         style="background: url('/Content/Images/bn4.jpeg') center/cover no-repeat; height: 220px;">
-    <div class="overlay"></div>
-    <div class="container position-relative">
-        <h1 class="fw-bold">@ViewBag.Title</h1>
-        <a href="@Url.Action("AssignedRequests","Employee")" class="btn btn-outline-light mt-2">
-            <i class="fa fa-arrow-left"></i> Back to Requests
-        </a>
+<style>
+    .pg-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 2px;
+    }
+
+    .pg-sub {
+        font-size: 12.5px;
+        color: #aaa;
+        margin-bottom: 18px;
+    }
+
+    /* Back button */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 16px;
+        background: #fff;
+        color: #1a1a2e;
+        border: 1.5px solid #eee;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.18s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+        .btn-back:hover {
+            background: #fef3f2;
+            border-color: #C0392B;
+            color: #C0392B;
+        }
+
+    .page-topbar {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    /* Detail card */
+    .detail-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #eee;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+
+    .card-hdr {
+        padding: 13px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-hicon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .card-hdr h6 {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .card-body-inner {
+        padding: 20px;
+    }
+
+    /* Info rows */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .info-item label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .info-item .info-val {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .info-item .info-val.light { font-weight: 400; color: #555; }
+
+    /* Status pill */
+    .sp {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+    .sp-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .sp.pending    { background: #fff8e6; color: #b7770d; border: 1px solid #f5d87a; }
+    .sp.inprogress { background: #eef5ff; color: #1a5fa8; border: 1px solid #aecbf5; }
+    .sp.completed  { background: #e8f8f0; color: #1a7a47; border: 1px solid #b7e4cc; }
+
+    /* Description box */
+    .desc-box {
+        background: #fafafa;
+        border: 1px solid #f0f0f0;
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 13.5px;
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 16px;
+    }
+
+    /* Image thumbnails */
+    .img-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .img-thumb {
+        width: 90px;
+        height: 90px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1.5px solid #eee;
+        flex-shrink: 0;
+        text-decoration: none;
+        display: block;
+        transition: box-shadow 0.2s;
+    }
+
+        .img-thumb:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+        .img-thumb img   { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .img-thumb-empty {
+        width: 90px;
+        height: 90px;
+        border-radius: 10px;
+        background: #f5f5f5;
+        border: 1.5px dashed #ddd;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #ccc;
+        font-size: 20px;
+        gap: 4px;
+    }
+
+        .img-thumb-empty span { font-size: 10px; color: #ccc; }
+
+    /* Form elements */
+    .form-label-custom {
+        font-size: 12px;
+        font-weight: 700;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        border: 1.5px solid #eee;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13.5px;
+        color: #333;
+        background: #fff;
+        transition: border-color 0.18s, box-shadow 0.18s;
+        outline: none;
+        font-family: inherit;
+    }
+
+        .form-control-custom:focus {
+            border-color: #C0392B;
+            box-shadow: 0 0 0 3px rgba(192,57,43,0.08);
+        }
+
+    textarea.form-control-custom { resize: vertical; min-height: 110px; }
+
+    .form-row-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    @@media (max-width: 540px) {
+        .form-row-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    /* Submit button */
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 3px 12px rgba(192,57,43,0.28);
+        transition: opacity 0.2s, transform 0.15s;
+    }
+
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Required star */
+    .req-star { color: #C0392B; margin-left: 2px; }
+</style>
+
+<div class="page-topbar">
+    <div>
+        <div class="pg-title"><i class="fa fa-reply me-2" style="color:#C0392B;"></i>Respond to Request</div>
+        <div class="pg-sub">Review the request details and submit your response</div>
     </div>
-</section>
+    <a href="@Url.Action("AssignedRequests","Employee")" class="btn-back">
+        <i class="fa fa-arrow-left"></i> Back to Requests
+    </a>
+</div>
 
-<div class="container mt-5 mb-5">
-    <div class="card shadow border-0">
-        <div class="card-body">
-            <h4 class="fw-bold mb-3 text-primary">Repair Request Details</h4>
+<!-- ===== Request Detail Card ===== -->
+<div class="detail-card">
+    <div class="card-hdr">
+        <div class="card-hicon"><i class="fa fa-file-alt"></i></div>
+        <h6>Request #@Model.RequestID — Details</h6>
+    </div>
+    <div class="card-body-inner">
 
-            <p><strong>Customer:</strong> @ViewBag.CustomerName (@ViewBag.CustomerEmail)</p>
-            <p><strong>Contact:</strong> @ViewBag.CustomerContact</p>
-            <p><strong>Description:</strong> @Model.ProblemDescription</p>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Customer Name</label>
+                <div class="info-val">@(ViewBag.CustomerName ?? "—")</div>
+            </div>
+            <div class="info-item">
+                <label>Email</label>
+                <div class="info-val light">@(ViewBag.CustomerEmail ?? "—")</div>
+            </div>
+            <div class="info-item">
+                <label>Contact</label>
+                <div class="info-val light">@(ViewBag.CustomerContact ?? "—")</div>
+            </div>
+            <div class="info-item">
+                <label>Request Date</label>
+                <div class="info-val light">@(Model.RequestDate?.ToString("MMM dd, yyyy — hh:mm tt") ?? "—")</div>
+            </div>
+            <div class="info-item">
+                <label>Status</label>
+                <div>
+                    @{
+                        string sc = Model.Status == "Pending"     ? "pending"
+                                  : Model.Status == "In Progress" ? "inprogress"
+                                  : Model.Status == "Completed"   ? "completed" : "pending";
+                    }
+                    <span class="sp @sc"><span class="sp-dot"></span>@Model.Status</span>
+                </div>
+            </div>
+        </div>
 
-            <div class="mb-3 d-flex gap-3">
+        <div class="info-item" style="margin-bottom:14px;">
+            <label>Problem Description</label>
+            <div class="desc-box">@Model.ProblemDescription</div>
+        </div>
+
+        <div class="info-item">
+            <label>Attached Images</label>
+            <div class="img-row" style="margin-top:8px;">
                 @if (!string.IsNullOrEmpty(Model.ProblemImage1))
-                {
-                    <img src="@Url.Content(Model.ProblemImage1)" class="img-thumbnail" style="width:120px;height:120px;" />
-                }
+                { <a href="@Url.Content(Model.ProblemImage1)" target="_blank" class="img-thumb"><img src="@Url.Content(Model.ProblemImage1)" alt="Image 1" /></a> }
+                else
+                { <div class="img-thumb-empty"><i class="fa fa-image"></i><span>No Image</span></div> }
+
                 @if (!string.IsNullOrEmpty(Model.ProblemImage2))
-                {
-                    <img src="@Url.Content(Model.ProblemImage2)" class="img-thumbnail" style="width:120px;height:120px;" />
-                }
+                { <a href="@Url.Content(Model.ProblemImage2)" target="_blank" class="img-thumb"><img src="@Url.Content(Model.ProblemImage2)" alt="Image 2" /></a> }
+                else
+                { <div class="img-thumb-empty"><i class="fa fa-image"></i><span>No Image</span></div> }
+
                 @if (!string.IsNullOrEmpty(Model.ProblemImage3))
-                {
-                    <img src="@Url.Content(Model.ProblemImage3)" class="img-thumbnail" style="width:120px;height:120px;" />
-                }
+                { <a href="@Url.Content(Model.ProblemImage3)" target="_blank" class="img-thumb"><img src="@Url.Content(Model.ProblemImage3)" alt="Image 3" /></a> }
+                else
+                { <div class="img-thumb-empty"><i class="fa fa-image"></i><span>No Image</span></div> }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== Response Form Card ===== -->
+<div class="detail-card">
+    <div class="card-hdr">
+        <div class="card-hicon"><i class="fa fa-paper-plane"></i></div>
+        <h6>Your Response</h6>
+    </div>
+    <div class="card-body-inner">
+
+        @using (Html.BeginForm("RespondToRequest", "Employee", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("id", Model.RequestID)
+
+            <div class="form-group">
+                <label class="form-label-custom">Solution Description <span class="req-star">*</span></label>
+                <textarea name="SolutionDesc" class="form-control-custom" rows="5" required
+                          placeholder="Describe the solution you will provide..."></textarea>
             </div>
 
-            <hr />
-
-            <h5 class="fw-bold text-secondary mb-3">Provide Your Response</h5>
-
-            @using (Html.BeginForm("RespondToRequest", "Employee", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
-                @Html.Hidden("id", Model.RequestID)
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Solution Description</label>
-                    <textarea name="SolutionDesc" class="form-control" rows="4" required></textarea>
+            <div class="form-row-grid">
+                <div class="form-group">
+                    <label class="form-label-custom">Estimated Cost (Rs.) <span class="req-star">*</span></label>
+                    <input type="number" name="EstimatedCost" class="form-control-custom"
+                           placeholder="e.g. 2500" required min="0" />
                 </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Estimated Cost (Rs.)</label>
-                        <input type="number" name="EstimatedCost" class="form-control" required />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Estimated Time</label>
-                        <input type="text" name="EstimatedTime" class="form-control" placeholder="e.g. 2 days" required />
-                    </div>
+                <div class="form-group">
+                    <label class="form-label-custom">Estimated Time <span class="req-star">*</span></label>
+                    <input type="text" name="EstimatedTime" class="form-control-custom"
+                           placeholder="e.g. 2 days" required />
                 </div>
+            </div>
 
-                <button type="submit" class="btn btn-success px-4">
-                    <i class="fa fa-paper-plane"></i> Submit Response
-                </button>
-            }
-        </div>
+            <button type="submit" class="btn-submit">
+                <i class="fa fa-paper-plane"></i> Submit Response
+            </button>
+        }
+
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     @if (TempData["Message"] != null)
     {
         <script>
             Swal.fire({
                 icon: 'success',
-                title: 'Success',
+                title: 'Response Submitted!',
                 text: '@TempData["Message"]',
-                confirmButtonColor: '#3085d6'
+                confirmButtonColor: '#C0392B',
+                timer: 2500,
+                timerProgressBar: true
             });
         </script>
     }

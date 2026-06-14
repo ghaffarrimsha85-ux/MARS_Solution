@@ -1,0 +1,879 @@
+﻿@model IEnumerable<MARS_Project.Models.RepairRequest>
+@{
+    ViewBag.Title = "Repair Requests";
+    ViewBag.Active = "repairs";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pg-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 2px;
+    }
+
+    .pg-sub {
+        font-size: 12.5px;
+        color: #aaa;
+        margin-bottom: 18px;
+    }
+
+    /* Summary pills */
+    .summary-pills {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .s-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+
+    .pill-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .s-pill.all .pill-icon {
+        background: #fef3f2;
+        color: #C0392B;
+    }
+
+    .s-pill.pend .pill-icon {
+        background: #fff8e6;
+        color: #b7770d;
+    }
+
+    .s-pill.asgnd .pill-icon {
+        background: #eef5ff;
+        color: #1a5fa8;
+    }
+
+    .s-pill.done .pill-icon {
+        background: #e8f8f0;
+        color: #1a7a47;
+    }
+
+    .pill-val {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1a1a2e;
+        line-height: 1;
+    }
+
+    .pill-label {
+        font-size: 10.5px;
+        color: #aaa;
+        font-weight: 500;
+    }
+
+    /* Table card */
+    .tbl-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #eee;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .tbl-head {
+        padding: 13px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .tbl-hicon {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg,#C0392B,#8B1A14);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+    }
+
+    .tbl-head h6 {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .count-badge {
+        background: #fef3f2;
+        color: #C0392B;
+        border: 1px solid rgba(192,57,43,0.2);
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .tbl-body {
+        padding: 0 20px 16px;
+        overflow-x: auto;
+    }
+
+    #tblRepairs thead tr {
+        background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+        color: #fff !important;
+    }
+
+    #tblRepairs thead th {
+        border: none !important;
+        padding: 11px 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: #fff !important;
+    }
+
+    table.dataTable tbody tr {
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        table.dataTable tbody tr:hover {
+            background: #fefefe !important;
+        }
+
+    table.dataTable tbody td {
+        padding: 10px 14px !important;
+        font-size: 13px;
+        vertical-align: middle;
+        color: #444;
+    }
+
+    /* Customer avatar */
+    .cust-av {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#C0392B,#E8C97A);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        vertical-align: middle;
+        margin-right: 7px;
+        flex-shrink: 0;
+    }
+
+    /* Req ID */
+    .req-id {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #fef3f2;
+        color: #C0392B;
+        border-radius: 8px;
+        padding: 3px 9px;
+        font-size: 12.5px;
+        font-weight: 700;
+    }
+
+    /* Description truncate */
+    .desc-cell {
+        max-width: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12.5px;
+        color: #666;
+    }
+
+    /* Status pill */
+    .sp {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+    .sp-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .sp.pending {
+        background: #fff8e6;
+        color: #b7770d;
+        border: 1px solid #f5d87a;
+    }
+
+    .sp.assigned {
+        background: #eef5ff;
+        color: #1a5fa8;
+        border: 1px solid #aecbf5;
+    }
+
+    .sp.inprogress {
+        background: #f3eeff;
+        color: #7c3aed;
+        border: 1px solid #c4b5fd;
+    }
+
+    .sp.completed {
+        background: #e8f8f0;
+        color: #1a7a47;
+        border: 1px solid #b7e4cc;
+    }
+
+    /* Employee assigned chip */
+    .emp-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #eef5ff;
+        color: #1a5fa8;
+        border-radius: 8px;
+        padding: 3px 9px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .not-assigned {
+        font-size: 12px;
+        color: #bbb;
+        font-style: italic;
+    }
+
+    /* Image thumbs */
+    .img-thumbs {
+        display: flex;
+        gap: 4px;
+    }
+
+    .img-th {
+        width: 34px;
+        height: 34px;
+        border-radius: 7px;
+        overflow: hidden;
+        border: 1px solid #eee;
+        flex-shrink: 0;
+    }
+
+        .img-th img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    .img-th-empty {
+        width: 34px;
+        height: 34px;
+        border-radius: 7px;
+        background: #f5f5f5;
+        border: 1.5px dashed #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ddd;
+        font-size: 11px;
+    }
+
+    /* Action buttons */
+    .act-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #eee;
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.18s;
+    }
+
+        .act-btn.assign {
+            color: #1a5fa8;
+            border-color: #aecbf5;
+        }
+
+            .act-btn.assign:hover {
+                background: #1a5fa8;
+                border-color: #1a5fa8;
+                color: #fff;
+            }
+
+        .act-btn.view {
+            color: #7c3aed;
+            border-color: #c4b5fd;
+        }
+
+            .act-btn.view:hover {
+                background: #7c3aed;
+                border-color: #7c3aed;
+                color: #fff;
+            }
+
+        .act-btn.del {
+            color: #C0392B;
+            border-color: rgba(192,57,43,0.25);
+        }
+
+            .act-btn.del:hover {
+                background: #C0392B;
+                border-color: #C0392B;
+                color: #fff;
+            }
+
+    /* Detail modal */
+    .modal-header-custom {
+        background: linear-gradient(135deg,#1a0a08,#C0392B);
+        padding: 16px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .modal-header-custom::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .modal-header-custom h5 {
+            position: relative;
+            z-index: 2;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+    .modal-close-btn {
+        position: relative;
+        z-index: 2;
+        width: 30px;
+        height: 30px;
+        background: rgba(255,255,255,0.15);
+        border: none;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.18s;
+    }
+
+        .modal-close-btn:hover {
+            background: rgba(255,255,255,0.28);
+        }
+
+    .detail-body {
+        padding: 22px;
+        background: #fff;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .detail-box {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 1px solid #f0f0f0;
+    }
+
+        .detail-box .db-label {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 4px;
+        }
+
+        .detail-box .db-value {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+    .desc-section {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        border: 1px solid #f0f0f0;
+    }
+
+        .desc-section .ds-label {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 6px;
+        }
+
+        .desc-section .ds-text {
+            font-size: 13.5px;
+            color: #444;
+            line-height: 1.6;
+        }
+
+    .imgs-label {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .imgs-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+    .imgs-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .img-big {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1.5px solid #eee;
+    }
+
+        .img-big img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+            .img-big img:hover {
+                transform: scale(1.05);
+            }
+
+    .img-big-empty {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        background: #f5f5f5;
+        border: 1.5px dashed #ddd;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #ccc;
+        font-size: 22px;
+    }
+
+    .modal-footer-custom {
+        padding: 14px 22px;
+        background: #fafafa;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-close-modal {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 18px;
+        background: transparent;
+        color: #555;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: border-color 0.2s,color 0.2s;
+    }
+
+        .btn-close-modal:hover {
+            border-color: #C0392B;
+            color: #C0392B;
+        }
+
+    .btn-assign-modal {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 20px;
+        background: linear-gradient(135deg,#1a5fa8,#2980b9);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        text-decoration: none;
+    }
+
+        .btn-assign-modal:hover {
+            opacity: 0.9;
+            color: #fff;
+        }
+</style>
+
+<div class="pg-title"><i class="fa fa-wrench me-2" style="color:#C0392B;"></i>Repair Requests</div>
+<div class="pg-sub">View and manage all customer repair requests</div>
+
+@{
+    int total = Model.Count();
+    int pending = Model.Count(r => r.Status == "Pending");
+    int assigned = Model.Count(r => r.Status == "Assigned");
+    int completed = Model.Count(r => r.Status == "Completed");
+}
+
+<!-- Summary Pills -->
+<div class="summary-pills">
+    <div class="s-pill all">
+        <div class="pill-icon"><i class="fa fa-list"></i></div>
+        <div><div class="pill-val">@total</div><div class="pill-label">Total</div></div>
+    </div>
+    <div class="s-pill pend">
+        <div class="pill-icon"><i class="fa fa-clock"></i></div>
+        <div><div class="pill-val">@pending</div><div class="pill-label">Pending</div></div>
+    </div>
+    <div class="s-pill asgnd">
+        <div class="pill-icon"><i class="fa fa-user-tie"></i></div>
+        <div><div class="pill-val">@assigned</div><div class="pill-label">Assigned</div></div>
+    </div>
+    <div class="s-pill done">
+        <div class="pill-icon"><i class="fa fa-check"></i></div>
+        <div><div class="pill-val">@completed</div><div class="pill-label">Completed</div></div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="tbl-card">
+    <div class="tbl-head">
+        <div class="tbl-hicon"><i class="fa fa-wrench"></i></div>
+        <h6>All Repair Requests</h6>
+        <span class="count-badge">@total</span>
+    </div>
+    <div class="tbl-body">
+        <table id="tblRepairs" class="table w-100" style="margin-top:14px;">
+            <thead>
+                <tr>
+                    <th>Req #</th>
+                    <th>Customer</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Images</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var req in Model)
+                {
+                    string sc = req.Status == "Pending" ? "pending"
+                              : req.Status == "Assigned" ? "assigned"
+                              : req.Status == "In Progress" ? "inprogress"
+                              : req.Status == "Completed" ? "completed" : "pending";
+
+                    string initials = (req.User != null && !string.IsNullOrEmpty(req.User.Name))
+                                    ? req.User.Name[0].ToString().ToUpper() : "?";
+
+                    <tr>
+                        <td><span class="req-id">#@req.RequestID</span></td>
+                        <td>
+                            <span class="cust-av">@initials</span>
+                            <span style="font-weight:600;color:#1a1a2e;">
+                                @(req.User != null ? req.User.Name : "Unknown")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="desc-cell" title="@req.ProblemDescription">
+                                @req.ProblemDescription
+                            </span>
+                        </td>
+                        <td style="font-size:12px;color:#aaa;">
+                            @(req.RequestDate.HasValue ? req.RequestDate.Value.ToString("MMM dd, yyyy") : "—")
+                        </td>
+                        <td>
+                            <div class="img-thumbs">
+                                @if (!string.IsNullOrEmpty(req.ProblemImage1))
+                                {
+                                    <a href="@req.ProblemImage1" target="_blank" class="img-th" title="Photo 1">
+                                        <img src="@req.ProblemImage1" alt="img1" />
+                                    </a>
+                                }
+                                else
+                                { <div class="img-th-empty"><i class="fa fa-image"></i></div>}
+
+                                @if (!string.IsNullOrEmpty(req.ProblemImage2))
+                                {
+                                    <a href="@req.ProblemImage2" target="_blank" class="img-th" title="Photo 2">
+                                        <img src="@req.ProblemImage2" alt="img2" />
+                                    </a>
+                                }
+                                else
+                                { <div class="img-th-empty"><i class="fa fa-image"></i></div>}
+
+                                @if (!string.IsNullOrEmpty(req.ProblemImage3))
+                                {
+                                    <a href="@req.ProblemImage3" target="_blank" class="img-th" title="Photo 3">
+                                        <img src="@req.ProblemImage3" alt="img3" />
+                                    </a>
+                                }
+                                else
+                                { <div class="img-th-empty"><i class="fa fa-image"></i></div>}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="sp @sc">
+                                <span class="sp-dot"></span>@req.Status
+                            </span>
+                        </td>
+                        <td>
+                            @if (req.User1 != null)
+                            {
+                                <span class="emp-chip">
+                                    <i class="fa fa-user-tie" style="font-size:10px;"></i>
+                                    @req.User1.Name
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="not-assigned">Not assigned</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                <!-- View Detail -->
+                                <button type="button" class="act-btn view btn-view-detail"
+                                        data-id="@req.RequestID"
+                                        data-customer="@(req.User != null ? req.User.Name : "Unknown")"
+                                        data-desc="@req.ProblemDescription"
+                                        data-date="@(req.RequestDate.HasValue ? req.RequestDate.Value.ToString("MMM dd, yyyy · hh:mm tt") : "—")"
+                                        data-status="@req.Status"
+                                        data-assigned="@(req.User1 != null ? req.User1.Name : "")"
+                                        data-img1="@req.ProblemImage1"
+                                        data-img2="@req.ProblemImage2"
+                                        data-img3="@req.ProblemImage3"
+                                        title="View Details">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                <!-- Assign -->
+                                <a href="@Url.Action("AssignRepair","Admin", new { id = req.RequestID })"
+                                   class="act-btn assign" title="Assign to Employee">
+                                    <i class="fa fa-user-plus"></i>
+                                </a>
+                                <!-- Delete -->
+                                <a href="@Url.Action("DeleteRepair","Admin", new { id = req.RequestID })"
+                                   class="act-btn del btn-delete"
+                                   data-name="#@req.RequestID"
+                                   title="Delete">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" style="border:none;border-radius:16px;overflow:hidden;">
+            <div class="modal-header-custom">
+                <h5><i class="fa fa-wrench"></i> <span id="modalTitle">Request Details</span></h5>
+                <button class="modal-close-btn" data-bs-dismiss="modal" data-dismiss="modal">
+                    <i class="fa fa-xmark"></i>
+                </button>
+            </div>
+            <div class="detail-body">
+                <div class="detail-grid">
+                    <div class="detail-box">
+                        <div class="db-label">Customer</div>
+                        <div class="db-value" id="dCustomer">—</div>
+                    </div>
+                    <div class="detail-box">
+                        <div class="db-label">Request Date</div>
+                        <div class="db-value" id="dDate">—</div>
+                    </div>
+                    <div class="detail-box">
+                        <div class="db-label">Status</div>
+                        <div class="db-value" id="dStatus">—</div>
+                    </div>
+                    <div class="detail-box">
+                        <div class="db-label">Assigned To</div>
+                        <div class="db-value" id="dAssigned">—</div>
+                    </div>
+                </div>
+                <div class="desc-section">
+                    <div class="ds-label">Problem Description</div>
+                    <div class="ds-text" id="dDesc">—</div>
+                </div>
+                <div class="imgs-label">Problem Photos</div>
+                <div class="imgs-row" id="dImgs"></div>
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-close-modal" data-bs-dismiss="modal" data-dismiss="modal">
+                    <i class="fa fa-times"></i> Close
+                </button>
+                <a href="#" class="btn-assign-modal" id="dAssignBtn">
+                    <i class="fa fa-user-plus"></i> Assign to Employee
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tblRepairs').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    { extend:'excelHtml5', text:'<i class="fa fa-file-excel"></i> Excel', className:'dt-btn' },
+                    { extend:'print',      text:'<i class="fa fa-print"></i> Print',      className:'dt-btn' }
+                ],
+                pageLength: 10,
+                order: [[3,'desc']],
+                language: { search:'Search:', paginate:{ previous:'&lsaquo;', next:'&rsaquo;' } },
+                columnDefs: [{ orderable:false, targets:[4,7] }]
+            });
+        });
+
+        // View detail modal
+        document.querySelectorAll('.btn-view-detail').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id       = this.getAttribute('data-id');
+                var customer = this.getAttribute('data-customer');
+                var desc     = this.getAttribute('data-desc');
+                var date     = this.getAttribute('data-date');
+                var status   = this.getAttribute('data-status');
+                var assigned = this.getAttribute('data-assigned');
+                var img1     = this.getAttribute('data-img1');
+                var img2     = this.getAttribute('data-img2');
+                var img3     = this.getAttribute('data-img3');
+
+                document.getElementById('modalTitle').textContent  = 'Request #' + id + ' Details';
+                document.getElementById('dCustomer').textContent   = customer;
+                document.getElementById('dDate').textContent       = date;
+                document.getElementById('dStatus').textContent     = status;
+                document.getElementById('dAssigned').textContent   = assigned || 'Not assigned';
+                document.getElementById('dDesc').textContent       = desc;
+                document.getElementById('dAssignBtn').href         = '@Url.Action("AssignRepair","Admin")/' + id;
+
+                // Images
+                var imgsHtml = '';
+                [img1, img2, img3].forEach(function(img) {
+                    if (img && img.trim() !== '') {
+                        imgsHtml += '<a href="' + img + '" target="_blank" class="img-big"><img src="' + img + '" alt="photo" /></a>';
+                    } else {
+                        imgsHtml += '<div class="img-big-empty"><i class="fa fa-image"></i></div>';
+                    }
+                });
+                document.getElementById('dImgs').innerHTML = imgsHtml;
+
+                $('#detailModal').modal('show');
+            });
+        });
+
+        // Delete confirm
+        document.querySelectorAll('.btn-delete').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var url  = this.href;
+                var name = this.getAttribute('data-name');
+                Swal.fire({
+                    title: 'Delete Repair Request?',
+                    html: 'Are you sure you want to delete request <strong>' + name + '</strong>?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C0392B',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete!',
+                    reverseButtons: true
+                }).then(function(r) { if (r.isConfirmed) window.location.href = url; });
+            });
+        });
+
+        // Modal cleanup
+        $(document).on('hidden.bs.modal', '#detailModal', function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        });
+
+        @if (TempData["SuccessMessage"] != null) {
+            <text>
+            Swal.fire({ icon:'success', title:'Done!', text:'@TempData["SuccessMessage"]', confirmButtonColor:'#C0392B', timer:2500 });
+            </text>
+        }
+    </script>
+    <style>
+        .dt-btn {
+            background: linear-gradient(135deg,#C0392B,#8B1A14) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 7px !important;
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            margin-right: 4px !important;
+        }
+
+            .dt-btn:hover {
+                opacity: 0.85 !important;
+            }
+    </style>
+}

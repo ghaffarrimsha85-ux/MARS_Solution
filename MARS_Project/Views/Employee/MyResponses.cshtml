@@ -6,54 +6,221 @@
 }
 
 <style>
-    .page-title { font-size:1.2rem; font-weight:700; color:#1a1a2e; margin-bottom:3px; }
-    .page-sub   { font-size:12.5px; color:#aaa; margin-bottom:20px; }
+    .page-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 3px;
+    }
+
+    .page-sub {
+        font-size: 12.5px;
+        color: #aaa;
+        margin-bottom: 20px;
+    }
 
     /* Empty */
-    .empty-card { background:#fff; border-radius:16px; border:1px solid #eee; box-shadow:0 4px 16px rgba(0,0,0,0.05); padding:52px 24px; text-align:center; }
-    .empty-icon { width:68px; height:68px; background:#fef3f2; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:14px; }
-    .empty-icon i { font-size:26px; color:#C0392B; }
+    .empty-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        padding: 52px 24px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 68px;
+        height: 68px;
+        background: #fef3f2;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+    }
+
+        .empty-icon i {
+            font-size: 26px;
+            color: #C0392B;
+        }
 
     /* Table card */
-    .table-card { background:#fff; border-radius:16px; border:1px solid #eee; box-shadow:0 4px 16px rgba(0,0,0,0.05); overflow:hidden; }
-    .table-card-header { padding:14px 20px; border-bottom:1px solid #f0f0f0; background:#fafafa; display:flex; align-items:center; gap:10px; }
-    .table-card-header .hicon { width:32px; height:32px; background:linear-gradient(135deg,#C0392B,#8B1A14); border-radius:9px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; }
-    .table-card-header h6 { font-size:14px; font-weight:700; color:#1a1a2e; margin:0; }
+    .table-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .table-card-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .table-card-header .hicon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg,#C0392B,#8B1A14);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .table-card-header h6 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+        }
 
     /* Custom table */
-    .resp-table { width:100%; border-collapse:collapse; }
-    .resp-table thead tr { background:linear-gradient(135deg,#C0392B,#8B1A14); }
-    .resp-table thead th { padding:12px 16px; font-size:12px; font-weight:600; color:#fff; text-align:left; letter-spacing:0.4px; white-space:nowrap; border:none; }
-    .resp-table tbody tr { border-bottom:1px solid #f5f5f5; transition:background 0.15s; }
-    .resp-table tbody tr:last-child { border-bottom:none; }
-    .resp-table tbody tr:hover { background:#fef9f9; }
-    .resp-table tbody td { padding:12px 16px; font-size:13.5px; color:#444; vertical-align:middle; }
+    .resp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .resp-table thead tr {
+            background: linear-gradient(135deg,#C0392B,#8B1A14);
+        }
+
+        .resp-table thead th {
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            text-align: left;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            border: none;
+        }
+
+        .resp-table tbody tr {
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s;
+        }
+
+            .resp-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            .resp-table tbody tr:hover {
+                background: #fef9f9;
+            }
+
+        .resp-table tbody td {
+            padding: 12px 16px;
+            font-size: 13.5px;
+            color: #444;
+            vertical-align: middle;
+        }
 
     /* ID badge */
-    .id-badge { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; background:#fef3f2; color:#C0392B; font-size:12px; font-weight:700; }
+    .id-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #fef3f2;
+        color: #C0392B;
+        font-size: 12px;
+        font-weight: 700;
+    }
 
     /* Truncate text */
-    .truncate { max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+    .truncate {
+        max-width: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
 
     /* Cost chip */
-    .cost-chip { display:inline-flex; align-items:center; gap:4px; background:#e8f8f0; color:#1a7a47; border-radius:8px; padding:3px 9px; font-size:12.5px; font-weight:700; }
+    .cost-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #e8f8f0;
+        color: #1a7a47;
+        border-radius: 8px;
+        padding: 3px 9px;
+        font-size: 12.5px;
+        font-weight: 700;
+    }
 
     /* Time chip */
-    .time-chip { display:inline-flex; align-items:center; gap:4px; background:#eef5ff; color:#1a5fa8; border-radius:8px; padding:3px 9px; font-size:12.5px; font-weight:600; }
+    .time-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #eef5ff;
+        color: #1a5fa8;
+        border-radius: 8px;
+        padding: 3px 9px;
+        font-size: 12.5px;
+        font-weight: 600;
+    }
 
     /* Date chip */
-    .date-chip { font-size:12px; color:#aaa; }
+    .date-chip {
+        font-size: 12px;
+        color: #aaa;
+    }
 
     /* Action buttons */
-    .act-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid #eee; background:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; text-decoration:none; transition:all 0.18s; }
-    .act-btn.edit   { color:#2980b9; border-color:#aecbf5; }
-    .act-btn.edit:hover   { background:#2980b9; border-color:#2980b9; color:#fff; }
-    .act-btn.del    { color:#C0392B; border-color:rgba(192,57,43,0.25); }
-    .act-btn.del:hover    { background:#C0392B; border-color:#C0392B; color:#fff; }
+    .act-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #eee;
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.18s;
+    }
+
+        .act-btn.edit {
+            color: #2980b9;
+            border-color: #aecbf5;
+        }
+
+            .act-btn.edit:hover {
+                background: #2980b9;
+                border-color: #2980b9;
+                color: #fff;
+            }
+
+        .act-btn.del {
+            color: #C0392B;
+            border-color: rgba(192,57,43,0.25);
+        }
+
+            .act-btn.del:hover {
+                background: #C0392B;
+                border-color: #C0392B;
+                color: #fff;
+            }
 
     @@media(max-width:768px) {
         .resp-table thead th:nth-child(3),
-        .resp-table tbody td:nth-child(3) { display:none; }
+        .resp-table tbody td:nth-child(3) {
+            display: none;
+        }
     }
 </style>
 
@@ -95,7 +262,7 @@ else
                         <tr>
                             <td><div class="id-badge">@res.ResponseID</div></td>
                             <td><div class="id-badge" style="background:#eef5ff;color:#1a5fa8;">@res.RequestID</div></td>
-                            <td><span class="truncate" title="@res.RepairRequest?.ProblemDescription">@res.RepairRequest?.ProblemDescription</span></td>
+                            <td><span class="truncate" title="@(res.RepairRequest != null ? res.RepairRequest.ProblemDescription : "—")">@(res.RepairRequest != null ? res.RepairRequest.ProblemDescription : "—")</span></td>
                             <td><span class="truncate" title="@res.SolutionDesc">@res.SolutionDesc</span></td>
                             <td>
                                 @if (res.EstimatedCost.HasValue)
@@ -109,7 +276,7 @@ else
                                     <span class="time-chip"><i class="fa fa-clock" style="font-size:10px;"></i> @res.EstimatedTime</span>
                                 }
                             </td>
-                            <td><span class="date-chip">@res.ResponseDate?.ToString("MMM dd, yyyy")</span></td>
+                            <td><span class="date-chip">@(res.ResponseDate.HasValue ? res.ResponseDate.Value.ToString("MMM dd, yyyy") : "—")</span></td>
                             <td>
                                 <div style="display:flex;gap:6px;">
                                     <a href="@Url.Action("EditResponse","Employee", new { id = res.ResponseID })" class="act-btn edit" title="Edit">
